@@ -1,0 +1,121 @@
+[
+  {
+    "objectID": "curso-visualizacion.html",
+    "href": "curso-visualizacion.html",
+    "title": "EIN092B VISUALIZACIÓN",
+    "section": "",
+    "text": "← Volver a cursos"
+  },
+  {
+    "objectID": "curso-visualizacion.html#clases-y-material-pdf",
+    "href": "curso-visualizacion.html#clases-y-material-pdf",
+    "title": "EIN092B VISUALIZACIÓN",
+    "section": "Clases y material (PDF)",
+    "text": "Clases y material (PDF)\n\nIntroducción\nIntroducción a Power BI\nIntroducción a procesamiento de imágenes\nPrincipal Components Analysis (PCA)"
+  },
+  {
+    "objectID": "curso-vision-computacional.html",
+    "href": "curso-vision-computacional.html",
+    "title": "DEIA514 VISIÓN COMPUTACIONAL",
+    "section": "",
+    "text": "← Volver a cursos"
+  },
+  {
+    "objectID": "curso-vision-computacional.html#clases-y-material-pdf",
+    "href": "curso-vision-computacional.html#clases-y-material-pdf",
+    "title": "DEIA514 VISIÓN COMPUTACIONAL",
+    "section": "Clases y material (PDF)",
+    "text": "Clases y material (PDF)\n\nW1 - CV Introduction\nW2 - CV Segmentation\nW3 - Object Representation, Local Descriptors, Tracking\nW4 - Calibration & Geometric Vision\nW5 - Geometric Vision\nIntroducción VCA\nInference Optimizer for Embedded Systems\nOptimized CV Algorithms for Embedded Systems"
+  },
+  {
+    "objectID": "curso-hpc-ia.html",
+    "href": "curso-hpc-ia.html",
+    "title": "PROCESADORES DE ALTO RENDIMIENTO PARA APLICACIONES EN IA",
+    "section": "",
+    "text": "← Volver a cursos"
+  },
+  {
+    "objectID": "curso-hpc-ia.html#clases-y-material-pdf",
+    "href": "curso-hpc-ia.html#clases-y-material-pdf",
+    "title": "PROCESADORES DE ALTO RENDIMIENTO PARA APLICACIONES EN IA",
+    "section": "Clases y material (PDF)",
+    "text": "Clases y material (PDF)\n\nW1 - Introduction to HPC and AI\nW2 - Introduction to CUDA\nW3 - TensorRT\nW4.1 - HDL y HLS\nW4.2 - HLS4ML\nW4.3 - AMD Vitis AI"
+  },
+  {
+    "objectID": "curso-hpc-ia.html#proyectos-de-estudiantes",
+    "href": "curso-hpc-ia.html#proyectos-de-estudiantes",
+    "title": "PROCESADORES DE ALTO RENDIMIENTO PARA APLICACIONES EN IA",
+    "section": "Proyectos de estudiantes",
+    "text": "Proyectos de estudiantes\n\n\nTensorRT — Pirometría del Hollín\nUNetTRT\nOptimización de redes U-Net con TensorRT (FP32/FP16/INT8) para pirometría de hollín en llamas. Comparación de latencia, throughput y memoria en Jetson Orin.\nVer en GitHub\n\n\nDeepStream — Pirometría en Tiempo Real\ndeepstream-soot-pyrometry\nPipeline de inferencia optimizada con NVIDIA DeepStream y TensorRT para pirometría de hollín en llamas laminares en tiempo real.\nVer en GitHub\n\n\nFPGA — Clasificación k-NN\ntesis-knn-fpga\nImplementación del algoritmo k-NN en FPGA para clasificación binaria usando VHDL y síntesis de alto nivel (HLS).\nVer en GitHub"
+  },
+  {
+    "objectID": "curso-aprendizaje-automatico.html",
+    "href": "curso-aprendizaje-automatico.html",
+    "title": "APRENDIZAJE AUTOMATICO",
+    "section": "",
+    "text": "← Volver a cursos"
+  },
+  {
+    "objectID": "curso-aprendizaje-automatico.html#clases-y-material-pdf",
+    "href": "curso-aprendizaje-automatico.html#clases-y-material-pdf",
+    "title": "APRENDIZAJE AUTOMATICO",
+    "section": "Clases y material (PDF)",
+    "text": "Clases y material (PDF)\n\nS1 - Introducción a Machine Learning\nS2 - Regularización en Regresión Lineal, Regresión Logística, y Perceptrón\nS3 - Dimensionality Reduction (PCA and LDA)\nS4 - Feature Selection, K-nearest Neighbors & K-means\nS5 - Support Vector Machine\nS5.2 - Support Vector Regression\nS6 - Bagging and Boosting\nS7.1 - Introduction to ML implementation in Hardware\nS7.2 - Hyperparameter tuning with RayTune"
+  },
+  {
+    "objectID": "notebooks.html",
+    "href": "notebooks.html",
+    "title": "Notebooks",
+    "section": "",
+    "text": "Esta sección está preparada para publicar notebooks progresivamente."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Inicio",
+    "section": "",
+    "text": "Profesor: Jorge Portilla-Gómez\nDepartamento de Electrónica e Informática\nConcepción, UTFSM\nVer cursos\nEste sitio reúne el trabajo docente y apuntes de clase en áreas de ciencia de datos, visión computacional, visualización y computación de alto rendimiento aplicada a IA."
+  },
+  {
+    "objectID": "index.html#asignaturas",
+    "href": "index.html#asignaturas",
+    "title": "Inicio",
+    "section": "Asignaturas",
+    "text": "Asignaturas\n\n\nEIN087B - Ciencia de Datos\nIngeniería en Informática, UTFSM\n\n\nEIN092B - Visualización\nIngeniería en Informática, UTFSM\n\n\n\n\nDIA0204 - Aprendizaje Automático\nDoctorado en Inteligencia Artificial, UTFSM\n\n\nDEIA514 - Visión Computacional\nDoctorado en Inteligencia Artificial, UTFSM\n\n\nDIA0213 - Procesadores de Alto Rendimiento para Aplicaciones en IA\nDoctorado en Inteligencia Artificial, UTFSM"
+  },
+  {
+    "objectID": "curso-ciencia-de-datos.html",
+    "href": "curso-ciencia-de-datos.html",
+    "title": "EIN087B-Ciencia de Datos",
+    "section": "",
+    "text": "← Volver a cursos"
+  },
+  {
+    "objectID": "curso-ciencia-de-datos.html#clases-y-material-pdf",
+    "href": "curso-ciencia-de-datos.html#clases-y-material-pdf",
+    "title": "EIN087B-Ciencia de Datos",
+    "section": "Clases y material (PDF)",
+    "text": "Clases y material (PDF)\n\nW1.1 - Introducción\nW1.2 - Procesamiento y visualización de datos\nW1.3 - Ciencia de Datos\nW1.4 - Regresión Lineal\nW1.5 - Evaluación de algoritmos\nW1.6 - Evaluación de algoritmos en Python\nW1.8 - KMeans y KNN\nW1.9 - Bagging and Boosting\nW1.10 - Support Vector Machine\nW1.11 - Basic Image Processing and Time Series Analysis\nW1.12 - Deployment"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "Sobre mí",
+    "section": "",
+    "text": "Académico del Departamento de Electrónica e Informática de la Universidad Técnica Federico Santa María, enfocado en docencia aplicada y aprendizaje activo en ciencia de datos e inteligencia artificial."
+  },
+  {
+    "objectID": "about.html#líneas-de-trabajo",
+    "href": "about.html#líneas-de-trabajo",
+    "title": "Sobre mí",
+    "section": "Líneas de trabajo",
+    "text": "Líneas de trabajo\n\nAprendizaje automático\nVisión computacional\nVisualización de datos\nCómputo de alto rendimiento para IA"
+  },
+  {
+    "objectID": "cursos.html",
+    "href": "cursos.html",
+    "title": "Cursos",
+    "section": "",
+    "text": "Selecciona un curso para ver su clases.\n\n\nDIA0204 - APRENDIZAJE AUTOMÁTICO\nAbrir curso\n\n\nDEIA514 - VISIÓN COMPUTACIONAL\nAbrir curso\n\n\nEIN087B - CIENCIA DE DATOS\nAbrir curso\n\n\nEIN092B - VISUALIZACIÓN\nAbrir curso\n\n\nDIA0213 - PROCESADORES DE ALTO RENDIMIENTO PARA APLICACIONES EN IA\nAbrir curso"
+  }
+]
