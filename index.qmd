@@ -23,35 +23,40 @@ Este sitio reúne el trabajo docente y apuntes de clase en áreas de ciencia de 
 **EIN087B - CIENCIA DE DATOS**
 
 Ingeniería en Informática, UTFSM
-[Abrir curso](curso-ciencia-de-datos.qmd){.stretched-link}
+
+[Ver curso →](curso-ciencia-de-datos.qmd){.stretched-link}
 :::
 
 ::: {.course-card}
 **EIN092B - VISUALIZACIÓN**
 
 Ingeniería en Informática, UTFSM
-[Abrir curso](curso-visualizacion.qmd){.stretched-link}
+
+[Ver curso →](curso-visualizacion.qmd){.stretched-link}
 :::
 
 ::: {.course-card}
 **DIA0204 - APRENDIZAJE AUTOMÁTICO**
 
 Doctorado en Inteligencia Artificial, UTFSM
-[Abrir curso](curso-aprendizaje-automatico.qmd){.stretched-link}
+
+[Ver curso →](curso-aprendizaje-automatico.qmd){.stretched-link}
 :::
 
 ::: {.course-card}
 **DEIA514 - VISIÓN COMPUTACIONAL**
 
 Doctorado en Inteligencia Artificial, UTFSM
-[Abrir curso](curso-vision-computacional.qmd){.stretched-link}
+
+[Ver curso →](curso-vision-computacional.qmd){.stretched-link}
 :::
 
 ::: {.course-card}
 **DIA0213 - PROCESADORES DE ALTO RENDIMIENTO PARA APLICACIONES EN IA**
 
 Doctorado en Inteligencia Artificial, UTFSM
-[Abrir curso](curso-hpc-ia.qmd){.stretched-link}
+
+[Ver curso →](curso-hpc-ia.qmd){.stretched-link}
 :::
 
 :::

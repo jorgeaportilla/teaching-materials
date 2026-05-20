@@ -76,9 +76,12 @@ body {
 }
 
 .stretched-link {
-  color: inherit;
+  color: $primary;
   text-decoration: none;
-  font-size: 0;  /* oculta el texto "Abrir curso" ya que toda la tarjeta es clickeable */
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  display: inline-block;
 }
 
 .stretched-link::after {
