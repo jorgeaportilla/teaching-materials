@@ -82,13 +82,8 @@ body {
   font-size: 0.9rem;
   margin-top: 0.5rem;
   display: inline-block;
-}
-
-.stretched-link::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 16px;
+  position: relative;
+  z-index: 2;
 }
 
 .course-card:hover,
