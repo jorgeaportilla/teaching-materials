@@ -8,30 +8,30 @@ Selecciona un curso para ver su clases.
 ::: {.course-card}
 **DIA0204 - APRENDIZAJE AUTOMÁTICO**
 
-[Abrir curso](curso-aprendizaje-automatico.qmd){.stretched-link}
+[Abrir curso](curso-aprendizaje-automatico.qmd){.course-link}
 :::
 
 ::: {.course-card}
 **DEIA514 - VISIÓN COMPUTACIONAL**
 
-[Abrir curso](curso-vision-computacional.qmd){.stretched-link}
+[Abrir curso](curso-vision-computacional.qmd){.course-link}
 :::
 
 ::: {.course-card}
 **EIN087B - CIENCIA DE DATOS**
 
-[Abrir curso](curso-ciencia-de-datos.qmd){.stretched-link}
+[Abrir curso](curso-ciencia-de-datos.qmd){.course-link}
 :::
 
 ::: {.course-card}
 **EIN092B - VISUALIZACIÓN**
 
-[Abrir curso](curso-visualizacion.qmd){.stretched-link}
+[Abrir curso](curso-visualizacion.qmd){.course-link}
 :::
 
 ::: {.course-card}
 **DIA0213 - PROCESADORES DE ALTO RENDIMIENTO PARA APLICACIONES EN IA**
 
-[Abrir curso](curso-hpc-ia.qmd){.stretched-link}
+[Abrir curso](curso-hpc-ia.qmd){.course-link}
 :::
 ::::

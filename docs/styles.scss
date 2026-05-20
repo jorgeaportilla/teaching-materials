@@ -75,15 +75,13 @@ body {
   margin-bottom: 0.25rem;
 }
 
-.stretched-link {
+.course-link {
   color: $primary;
   text-decoration: none;
   font-weight: 600;
   font-size: 0.9rem;
   margin-top: 0.5rem;
   display: inline-block;
-  position: relative;
-  z-index: 2;
 }
 
 .course-card:hover,

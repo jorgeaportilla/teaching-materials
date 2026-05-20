@@ -24,6 +24,5 @@ format:
     toc: true
     smooth-scroll: true
     css: styles.scss
-    include-after-body: card-links.js
 
 lang: es

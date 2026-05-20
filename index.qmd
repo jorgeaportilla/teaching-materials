@@ -24,7 +24,7 @@ Este sitio reúne el trabajo docente y apuntes de clase en áreas de ciencia de 
 
 Ingeniería en Informática, UTFSM
 
-[Ver curso →](curso-ciencia-de-datos.qmd){.stretched-link}
+[Ver curso →](curso-ciencia-de-datos.qmd){.course-link}
 :::
 
 ::: {.course-card}
@@ -32,7 +32,7 @@ Ingeniería en Informática, UTFSM
 
 Ingeniería en Informática, UTFSM
 
-[Ver curso →](curso-visualizacion.qmd){.stretched-link}
+[Ver curso →](curso-visualizacion.qmd){.course-link}
 :::
 
 ::: {.course-card}
@@ -40,7 +40,7 @@ Ingeniería en Informática, UTFSM
 
 Doctorado en Inteligencia Artificial, UTFSM
 
-[Ver curso →](curso-aprendizaje-automatico.qmd){.stretched-link}
+[Ver curso →](curso-aprendizaje-automatico.qmd){.course-link}
 :::
 
 ::: {.course-card}
@@ -48,7 +48,7 @@ Doctorado en Inteligencia Artificial, UTFSM
 
 Doctorado en Inteligencia Artificial, UTFSM
 
-[Ver curso →](curso-vision-computacional.qmd){.stretched-link}
+[Ver curso →](curso-vision-computacional.qmd){.course-link}
 :::
 
 ::: {.course-card}
@@ -56,7 +56,7 @@ Doctorado en Inteligencia Artificial, UTFSM
 
 Doctorado en Inteligencia Artificial, UTFSM
 
-[Ver curso →](curso-hpc-ia.qmd){.stretched-link}
+[Ver curso →](curso-hpc-ia.qmd){.course-link}
 :::
 
 :::

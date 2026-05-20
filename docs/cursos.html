@@ -157,42 +157,29 @@ ul.task-list li input[type="checkbox"] {
 <div class="course-grid">
 <div class="course-card">
 <p><strong>DIA0204 - APRENDIZAJE AUTOMÁTICO</strong></p>
-<p><a href="./curso-aprendizaje-automatico.html" class="stretched-link">Abrir curso</a></p>
+<p><a href="./curso-aprendizaje-automatico.html" class="course-link">Abrir curso</a></p>
 </div>
 <div class="course-card">
 <p><strong>DEIA514 - VISIÓN COMPUTACIONAL</strong></p>
-<p><a href="./curso-vision-computacional.html" class="stretched-link">Abrir curso</a></p>
+<p><a href="./curso-vision-computacional.html" class="course-link">Abrir curso</a></p>
 </div>
 <div class="course-card">
 <p><strong>EIN087B - CIENCIA DE DATOS</strong></p>
-<p><a href="./curso-ciencia-de-datos.html" class="stretched-link">Abrir curso</a></p>
+<p><a href="./curso-ciencia-de-datos.html" class="course-link">Abrir curso</a></p>
 </div>
 <div class="course-card">
 <p><strong>EIN092B - VISUALIZACIÓN</strong></p>
-<p><a href="./curso-visualizacion.html" class="stretched-link">Abrir curso</a></p>
+<p><a href="./curso-visualizacion.html" class="course-link">Abrir curso</a></p>
 </div>
 <div class="course-card">
 <p><strong>DIA0213 - PROCESADORES DE ALTO RENDIMIENTO PARA APLICACIONES EN IA</strong></p>
-<p><a href="./curso-hpc-ia.html" class="stretched-link">Abrir curso</a></p>
+<p><a href="./curso-hpc-ia.html" class="course-link">Abrir curso</a></p>
 </div>
 </div>
 
 
 
 </main> <!-- /main -->
-// Make every .course-card clickable via its .stretched-link href
-document.addEventListener("DOMContentLoaded", function () {
-  document.querySelectorAll(".course-card").forEach(function (card) {
-    var link = card.querySelector("a.stretched-link");
-    if (!link) return;
-    var href = link.getAttribute("href");
-    card.style.cursor = "pointer";
-    card.addEventListener("click", function (e) {
-      if (e.target.tagName === "A") return; // let real clicks on <a> work normally
-      window.location.href = href;
-    });
-  });
-});
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
@@ -593,10 +580,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
   </script>
-</a></div><a> <!-- /content -->
+</div> <!-- /content -->
 
 
 
 
-</a><script src="site_libs/quarto-html/zenscroll-min.js"></script>
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
 </body></html>
