@@ -1,0 +1,51 @@
+---
+title: "Inicio"
+---
+
+::: {.hero}
+# Sitio Docente
+
+**Profesor:** Jorge Portilla-Gómez  
+Departamento de Electrónica e Informática  
+Concepción, UTFSM
+
+[Ver cursos](cursos.qmd){.btn-primary}
+:::
+
+
+Este sitio reúne el trabajo docente y apuntes de clase en áreas de ciencia de datos, visión computacional, visualización y computación de alto rendimiento aplicada a IA.
+
+## Asignaturas
+
+::: {.course-grid-2}
+
+::: {.course-card}
+### EIN087B - Ciencia de Datos
+Ingeniería en Informática, UTFSM
+:::
+
+::: {.course-card}
+### EIN092B - Visualización
+Ingeniería en Informática, UTFSM
+:::
+
+:::
+
+::: {.course-list}
+
+::: {.course-card}
+### DIA0204 - Aprendizaje Automático
+Doctorado en Inteligencia Artificial, UTFSM
+:::
+
+::: {.course-card}
+### DEIA514 - Visión Computacional
+Doctorado en Inteligencia Artificial, UTFSM
+:::
+
+::: {.course-card}
+### DIA0213 - Procesadores de Alto Rendimiento para Aplicaciones en IA
+Doctorado en Inteligencia Artificial, UTFSM
+:::
+
+:::
