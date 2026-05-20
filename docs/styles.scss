@@ -45,41 +45,52 @@ body {
 
 .course-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
 }
 
 .course-card {
   background: $bg-soft;
   border: 1px solid rgba(99, 102, 241, 0.15);
-  border-radius: 12px;
-  padding: 1rem;
+  border-radius: 16px;
+  padding: 1.75rem 1.5rem;
   height: 100%;
+  min-height: 120px;
   position: relative;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease, background 0.16s ease;
 }
 
-.course-card h3 {
+.course-card h3,
+.course-card > p > strong:first-child,
+.course-card > p:first-child > strong {
   color: $secondary;
   font-size: 1.05rem;
+  display: block;
+  margin-bottom: 0.25rem;
 }
 
 .stretched-link {
   color: inherit;
   text-decoration: none;
+  font-size: 0;  /* oculta el texto "Abrir curso" ya que toda la tarjeta es clickeable */
 }
 
 .stretched-link::after {
   content: "";
   position: absolute;
   inset: 0;
+  border-radius: 16px;
 }
 
 .course-card:hover,
 .course-card:focus-within {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.15);
-  border-color: rgba(99, 102, 241, 0.4);
-  background: rgba(99, 102, 241, 0.03);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(99, 102, 241, 0.18);
+  border-color: rgba(99, 102, 241, 0.5);
+  background: rgba(99, 102, 241, 0.05);
 }
