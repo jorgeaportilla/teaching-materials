@@ -586,5 +586,12 @@
     "title": "Cursos",
     "section": "",
     "text": "Selecciona un curso para ver su clases.\n\n\nDIA0204 - APRENDIZAJE AUTOMÁTICO\nAbrir curso\n\n\nDEIA514 - VISIÓN COMPUTACIONAL\nAbrir curso\n\n\nEIN087B - CIENCIA DE DATOS\nAbrir curso\n\n\nEIN092B - VISUALIZACIÓN\nAbrir curso\n\n\nDIA0213 - PROCESADORES DE ALTO RENDIMIENTO PARA APLICACIONES EN IA\nAbrir curso"
+  },
+  {
+    "objectID": "curso-vision-computacional.html#libros-recomendados",
+    "href": "curso-vision-computacional.html#libros-recomendados",
+    "title": "DEIA514 VISIÓN COMPUTACIONAL",
+    "section": "Libros recomendados",
+    "text": "Libros recomendados\n\n\nVisionBook (MIT)\nLibro abierto y moderno para enseñar fundamentos y aplicaciones de visión computacional.\nAbrir libro"
   }
 ]
