@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Comparando pandas (CPU) vs cuDF (GPU) para cargas de trabajo con DataFrames – Material Docente</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-6d98dc22342cdec766e9ba27c206e023.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../../../styles.scss">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Material Docente</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">Inicio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">Sobre mí</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul>
+  <li><a href="#entorno-y-configuración" id="toc-entorno-y-configuración" class="nav-link active" data-scroll-target="#entorno-y-configuración">1. Entorno y configuración</a></li>
+  <li><a href="#experimento" id="toc-experimento" class="nav-link" data-scroll-target="#experimento">2. Experimento</a>
+  <ul class="collapse">
+  <li><a href="#generación-de-un-dataset-sintético" id="toc-generación-de-un-dataset-sintético" class="nav-link" data-scroll-target="#generación-de-un-dataset-sintético">Generación de un dataset sintético</a></li>
+  <li><a href="#función-auxiliar-para-benchmarking" id="toc-función-auxiliar-para-benchmarking" class="nav-link" data-scroll-target="#función-auxiliar-para-benchmarking">Función auxiliar para benchmarking</a></li>
+  <li><a href="#baseline-pandas-cpu" id="toc-baseline-pandas-cpu" class="nav-link" data-scroll-target="#baseline-pandas-cpu">Baseline: pandas (CPU)</a></li>
+  <li><a href="#benchmarking-para-cudf-gpu" id="toc-benchmarking-para-cudf-gpu" class="nav-link" data-scroll-target="#benchmarking-para-cudf-gpu">Benchmarking para cuDF (GPU)</a></li>
+  <li><a href="#tabla-resumen-de-resultados" id="toc-tabla-resumen-de-resultados" class="nav-link" data-scroll-target="#tabla-resumen-de-resultados">Tabla resumen de resultados</a></li>
+  </ul></li>
+  <li><a href="#conclusiones" id="toc-conclusiones" class="nav-link" data-scroll-target="#conclusiones">3. Conclusiones</a>
+  <ul class="collapse">
+  <li><a href="#observaciones-relevantes" id="toc-observaciones-relevantes" class="nav-link" data-scroll-target="#observaciones-relevantes">Observaciones relevantes:</a></li>
+  <li><a href="#similitudes-y-diferencias-en-la-api" id="toc-similitudes-y-diferencias-en-la-api" class="nav-link" data-scroll-target="#similitudes-y-diferencias-en-la-api">Similitudes y diferencias en la API</a></li>
+  <li><a href="#consideraciones-prácticas-cpu-vs-gpu" id="toc-consideraciones-prácticas-cpu-vs-gpu" class="nav-link" data-scroll-target="#consideraciones-prácticas-cpu-vs-gpu">Consideraciones prácticas: CPU vs GPU</a></li>
+  </ul></li>
+  <li><a href="#ejercicio-predicción-y-comparación-cpu-vs-gpu" id="toc-ejercicio-predicción-y-comparación-cpu-vs-gpu" class="nav-link" data-scroll-target="#ejercicio-predicción-y-comparación-cpu-vs-gpu">4. Ejercicio: Predicción y comparación CPU vs GPU</a>
+  <ul class="collapse">
+  <li><a href="#generación-del-dataset" id="toc-generación-del-dataset" class="nav-link" data-scroll-target="#generación-del-dataset">Generación del dataset</a></li>
+  <li><a href="#función-auxiliar-para-benchmarking-1" id="toc-función-auxiliar-para-benchmarking-1" class="nav-link" data-scroll-target="#función-auxiliar-para-benchmarking-1">Función auxiliar para benchmarking</a></li>
+  <li><a href="#definición-de-operaciones" id="toc-definición-de-operaciones" class="nav-link" data-scroll-target="#definición-de-operaciones">Definición de operaciones</a></li>
+  <li><a href="#predicciones-previas-al-benchmarking" id="toc-predicciones-previas-al-benchmarking" class="nav-link" data-scroll-target="#predicciones-previas-al-benchmarking">Predicciones previas al benchmarking</a></li>
+  <li><a href="#benchmark-en-pandas-cpu" id="toc-benchmark-en-pandas-cpu" class="nav-link" data-scroll-target="#benchmark-en-pandas-cpu">Benchmark en pandas (CPU)</a></li>
+  <li><a href="#benchmark-en-cudf-gpu" id="toc-benchmark-en-cudf-gpu" class="nav-link" data-scroll-target="#benchmark-en-cudf-gpu">Benchmark en cuDF (GPU)</a></li>
+  <li><a href="#análisis-de-resultados" id="toc-análisis-de-resultados" class="nav-link" data-scroll-target="#análisis-de-resultados">Análisis de resultados</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Comparando pandas (CPU) vs cuDF (GPU) para cargas de trabajo con DataFrames</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>En este notebook, comparamos pandas ejecutándose en la CPU con RAPIDS cuDF ejecutándose en la GPU para operaciones comunes sobre DataFrames como carga de datos, filtrado, agrupamiento y unión.</p>
+<p>Nos enfocamos en:</p>
+<ul>
+<li>Diferencias en el tiempo de ejecución entre CPU y GPU.</li>
+<li>Similitudes y diferencias en las APIs.</li>
+<li>Consideraciones prácticas como el tamaño del dataset y el uso de memoria de la GPU.</li>
+</ul>
+<section id="entorno-y-configuración" class="level2">
+<h2 class="anchored" data-anchor-id="entorno-y-configuración">1. Entorno y configuración</h2>
+<p>Esta sección verifica las versiones de Python, pandas y cuDF, y comprueba que haya una GPU disponible.</p>
+<div id="qxtlD4IFFq3t" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008674860,&quot;user_tz&quot;:180,&quot;elapsed&quot;:440,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> subprocess</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="xqrLi1c91Sbt" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008682995,&quot;user_tz&quot;:180,&quot;elapsed&quot;:8133,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-outputid="74df0e24-7221-4989-fd39-acc25d0ab6db" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Opcional: Configuración de cuDF para Google Colab y Visual Studio Code</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> install_cudf():</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> cudf</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"cuDF ya está instalado:"</span>, cudf.__version__)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">True</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">ImportError</span>:</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"cuDF no encontrado."</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Intentando instalar..."</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Caso: Google Colab</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    in_colab <span class="op">=</span> <span class="st">"google.colab"</span> <span class="kw">in</span> sys.modules</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> in_colab:</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Entorno detectado: Google Colab"</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>            <span class="im">import</span> torch</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="kw">not</span> torch.cuda.is_available():</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                <span class="bu">print</span>(<span class="st">"No se detectó una GPU activa."</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>                <span class="bu">print</span>(<span class="st">"Por favor habilita la GPU en: Runtime &gt; Change runtime type"</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="va">False</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span>:</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>            <span class="cf">pass</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Instalación oficial de RAPIDS para Colab</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>        <span class="op">!</span>pip install <span class="op">-</span>q cudf<span class="op">-</span>cu12 <span class="op">--</span>extra<span class="op">-</span>index<span class="op">-</span>url<span class="op">=</span>https:<span class="op">//</span>pypi.nvidia.com</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Caso: Entorno local (VS Code u otros)</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Entorno detectado: Local (VS Code u otro)"</span>)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"cuDF requiere instalación manual con RAPIDS."</span>)</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Pasos sugeridos:"</span>)</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"  conda create -n rapids python=3.10"</span>)</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"  conda activate rapids"</span>)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"  pip install cudf-cu12 --extra-index-url=https://pypi.nvidia.com"</span>)</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Alternativa (venv en lugar de conda):"</span>)</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Advertencia: Requiere versión de Python compatible (3.10 o 3.11) y entorno Linux"</span>)</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Paso 1: Instalar Python 3.10 o 3.11 (si no está instalado)"</span>)</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Paso 2: Crear entorno virtual con esa versión:"</span>)</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"  python3.10 -m venv rapids_env   # o python3.11"</span>)</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Paso 3: Activar el entorno:"</span>)</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"  source rapids_env/bin/activate   # Linux / Mac"</span>)</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"  rapids_env</span><span class="ch">\\</span><span class="st">Scripts</span><span class="ch">\\</span><span class="st">activate.bat  # Windows (CMD)"</span>)</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Paso 4: Actualizar pip:"</span>)</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"  python -m pip install --upgrade pip"</span>)</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Paso 5: Instalar cuDF:"</span>)</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"  pip install cudf-cu12 --extra-index-url=https://pypi.nvidia.com"</span>)</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Nota: cuDF está principalmente soportado en Linux. En Windows puede fallar."</span>)</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Nota: Para mejores resultados, usa Google Colab o WSL2."</span>)</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">False</span></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Verificación de la instalación</span></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> cudf</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"cuDF instalado correctamente:"</span>, cudf.__version__)</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">True</span></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">ImportError</span>:</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">"Error al instalar cuDF."</span>)</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">False</span></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>CUDF_AVAILABLE <span class="op">=</span> install_cudf()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>cuDF ya está instalado: 26.02.01</code></pre>
+</div>
+</div>
+<div id="0bcZ0rj9E1_u" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008682998,&quot;user_tz&quot;:180,&quot;elapsed&quot;:2,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-outputid="e78af033-ea3d-450b-9a6c-d7230f55e6c5" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificación de versiones</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Versión de Python:"</span>, sys.version)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Versión de pandas:"</span>, pd.__version__)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> cudf</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    CUDF_AVAILABLE <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Versión de cuDF:"</span>, cudf.__version__)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ImportError</span>:</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    CUDF_AVAILABLE <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"cuDF no está instalado. Se omitirán los benchmarks en GPU."</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>RANDOM_SEED <span class="op">=</span> <span class="dv">42</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>np.random.seed(RANDOM_SEED)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Versión de Python: 3.12.12 (main, Oct 10 2025, 08:52:57) [GCC 11.4.0]
+Versión de pandas: 2.2.2
+Versión de cuDF: 26.02.01</code></pre>
+</div>
+</div>
+<div id="brLoezAnE4SO" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008683232,&quot;user_tz&quot;:180,&quot;elapsed&quot;:233,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-outputid="4b376d03-a519-4e2d-fb71-33e62b7160cd" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Opcional: Comprobar información de la GPU usando nvidia-smi (si está disponible)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>nvidia<span class="op">-</span>smi <span class="op">||</span> echo <span class="st">"nvidia-smi no está disponible en este sistema"</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fri Mar 20 12:11:23 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.82.07              Driver Version: 580.82.07      CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  Tesla T4                       Off |   00000000:00:04.0 Off |                    0 |
+| N/A   38C    P8              9W /   70W |       0MiB /  15360MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+</code></pre>
+</div>
+</div>
+</section>
+<section id="experimento" class="level2">
+<h2 class="anchored" data-anchor-id="experimento">2. Experimento</h2>
+<p>En ciencia de datos en Python, pandas es una de las librerías más utilizadas para trabajar con datos tabulares mediante estructuras llamadas DataFrames. Estas permiten filtrar, agrupar, transformar y analizar datos de forma eficiente. Sin embargo, pandas ejecuta sus operaciones en la CPU (Central Processing Unit), es decir, el procesador principal del computador, que está optimizado para tareas generales y secuenciales.</p>
+<p>Por otro lado, cuDF es una librería desarrollada dentro del ecosistema RAPIDS, que ofrece una API muy similar a pandas, pero ejecuta las operaciones en la GPU (Graphics Processing Unit). A diferencia de la CPU, la GPU está diseñada para realizar muchas operaciones en paralelo, lo que la hace especialmente eficiente para procesar grandes volúmenes de datos.</p>
+<p>El proyecto RAPIDS (desarrollado por NVIDIA) busca precisamente acelerar flujos de trabajo de ciencia de datos utilizando GPUs, permitiendo que muchas operaciones comunes (como filtrado, groupby o joins) se ejecuten mucho más rápido en comparación con su equivalente en CPU.</p>
+<p>En este experimento se propone:</p>
+<ol type="1">
+<li>Generar un dataset sintético con varios millones de filas.</li>
+<li>Ejecutar las mismas operaciones con pandas (CPU).</li>
+<li>Ejecutar las mismas operaciones con cuDF (GPU).</li>
+<li>Medir el tiempo de ejecución usando <code>time.perf_counter</code>.</li>
+<li>Comparar los resultados y analizar cuándo la aceleración con GPU es beneficiosa.</li>
+</ol>
+<section id="generación-de-un-dataset-sintético" class="level3">
+<h3 class="anchored" data-anchor-id="generación-de-un-dataset-sintético">Generación de un dataset sintético</h3>
+<div id="f96e2bb8" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008694525,&quot;user_tz&quot;:180,&quot;elapsed&quot;:11297,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-outputid="8342784d-af54-4fbb-d387-ae4b5e276af8" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tamaño configurable según la RAM / GPU disponible</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>N_ROWS <span class="op">=</span> <span class="dv">5_000_000</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>categories <span class="op">=</span> [<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>, <span class="st">"D"</span>, <span class="st">"E"</span>]</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>n_categories <span class="op">=</span> <span class="bu">len</span>(categories)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Generando dataset sintético con </span><span class="sc">{</span>N_ROWS<span class="sc">:,}</span><span class="ss"> filas..."</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>df_cpu <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"id"</span>: np.arange(N_ROWS, dtype<span class="op">=</span>np.int64),</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"category"</span>: np.random.choice(categories, size<span class="op">=</span>N_ROWS),</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"value1"</span>: np.random.randn(N_ROWS).astype(np.float32),</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"value2"</span>: np.random.randint(<span class="dv">0</span>, <span class="dv">1000</span>, size<span class="op">=</span>N_ROWS, dtype<span class="op">=</span>np.int32),</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Guardar dataset en CSV (para simular carga de trabajo de I/O real)</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>csv_path <span class="op">=</span> <span class="st">"synthetic_dataset.csv"</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>df_cpu.to_csv(csv_path, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Información del tamaño del archivo</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>file_size_mb <span class="op">=</span> os.path.getsize(csv_path) <span class="op">/</span> <span class="fl">1e6</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Dataset guardado en </span><span class="sc">{</span>csv_path<span class="sc">}</span><span class="ss"> (</span><span class="sc">{</span>file_size_mb<span class="sc">:.2f}</span><span class="ss"> MB)"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Generando dataset sintético con 5,000,000 filas...
+Dataset guardado en synthetic_dataset.csv (122.88 MB)</code></pre>
+</div>
+</div>
+</section>
+<section id="función-auxiliar-para-benchmarking" class="level3">
+<h3 class="anchored" data-anchor-id="función-auxiliar-para-benchmarking">Función auxiliar para benchmarking</h3>
+<p>Para poder comparar de forma justa el rendimiento entre CPU y GPU, necesitamos medir cuánto tiempo tarda cada operación.</p>
+<p>En lugar de repetir el mismo código de medición una y otra vez, encapsulamos este comportamiento en una función auxiliar. Esto nos permite reutilizarla fácilmente y mantener el código más limpio y consistente.</p>
+<p>La idea es simple: - Registrar el tiempo antes de ejecutar una función. - Ejecutar la operación que queremos medir. - Registrar el tiempo después. - Calcular la diferencia.</p>
+<div id="305b1b76" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008694526,&quot;user_tz&quot;:180,&quot;elapsed&quot;:3,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># func: Función de interés</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># *args: Todos los argumentos posicionales que se le pasarán a func</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># **kwargs: Todos los keyword arguments que se le pasarán a func</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> benchmark(func, <span class="op">*</span>args, <span class="op">**</span>kwargs):</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> time.perf_counter()</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> func(<span class="op">*</span>args, <span class="op">**</span>kwargs)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    end <span class="op">=</span> time.perf_counter()</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result, end <span class="op">-</span> start</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="baseline-pandas-cpu" class="level3">
+<h3 class="anchored" data-anchor-id="baseline-pandas-cpu">Baseline: pandas (CPU)</h3>
+<p>En esta sección ejecutamos todas las operaciones utilizando pandas, es decir, trabajando únicamente sobre la CPU. Esto nos servirá como referencia (baseline) para luego comparar con la versión en GPU usando cuDF.</p>
+<p>Las operaciones que evaluaremos son típicas en flujos de trabajo de análisis de datos:</p>
+<ul>
+<li>Carga de datos desde disco (CSV).</li>
+<li>Filtrado de filas según condiciones.</li>
+<li>Agrupación (groupby) con agregaciones.</li>
+<li>Unión de datos (join/merge) con otra tabla.</li>
+</ul>
+<p><strong>Nota:</strong> Cada una de estas operaciones se ejecuta utilizando la función de benchmarking, que retorna una tupla del tipo (resultado, tiempo de ejecución). Esto permite, por un lado, obtener el resultado de la operación (por ejemplo, un DataFrame transformado) y, por otro, medir cuánto tiempo tardó en ejecutarse. De esta forma, podemos analizar el rendimiento sin perder acceso a los datos generados en cada paso.</p>
+<div id="q1yAsM1qW9vP" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008697026,&quot;user_tz&quot;:180,&quot;elapsed&quot;:2500,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-outputid="410937b3-7287-4a81-e84f-3b69517c21a9" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"=== pandas (CPU) benchmarks ==="</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Cargar CSV</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>df_pandas, t_load_pandas <span class="op">=</span> benchmark(pd.read_csv, csv_path)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"pandas - load CSV: </span><span class="sc">{</span>t_load_pandas<span class="sc">:.3f}</span><span class="ss"> seconds"</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Filtrado simple</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> pandas_filter(df):</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df[(df[<span class="st">"value1"</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (df[<span class="st">"value2"</span>] <span class="op">&gt;</span> <span class="dv">500</span>)]</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>filtered_pandas, t_filter_pandas <span class="op">=</span> benchmark(pandas_filter, df_pandas)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"pandas - filter: </span><span class="sc">{</span>t_filter_pandas<span class="sc">:.3f}</span><span class="ss"> seconds"</span>)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Agrupación Groupby</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> pandas_groupby(df):</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df.groupby(<span class="st">"category"</span>)[<span class="st">"value1"</span>].agg([<span class="st">"mean"</span>, <span class="st">"std"</span>, <span class="st">"count"</span>])</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>grouped_pandas, t_group_pandas <span class="op">=</span> benchmark(pandas_groupby, df_pandas)</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"pandas - groupby: </span><span class="sc">{</span>t_group_pandas<span class="sc">:.3f}</span><span class="ss"> seconds"</span>)</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Join / merge</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> pandas_join(df):</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    lookup <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">"category"</span>: categories,</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">"weight"</span>: np.linspace(<span class="fl">1.0</span>, <span class="fl">2.0</span>, n_categories).astype(np.float32)</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df.merge(lookup, on<span class="op">=</span><span class="st">"category"</span>, how<span class="op">=</span><span class="st">"left"</span>)</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>joined_pandas, t_join_pandas <span class="op">=</span> benchmark(pandas_join, df_pandas)</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"pandas - join: </span><span class="sc">{</span>t_join_pandas<span class="sc">:.3f}</span><span class="ss"> seconds"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>=== pandas (CPU) benchmarks ===
+pandas - load CSV: 1.557 seconds
+pandas - filter: 0.080 seconds
+pandas - groupby: 0.354 seconds
+pandas - join: 0.559 seconds</code></pre>
+</div>
+</div>
+<section id="detalle-pandas_groupby" class="level4">
+<h4 class="anchored" data-anchor-id="detalle-pandas_groupby">Detalle <code>pandas_groupby</code></h4>
+<p>Esta función toma un DataFrame y realiza una agregación agrupando por una categoría.</p>
+<div id="_EN_t2lXoT5O" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008697039,&quot;user_tz&quot;:180,&quot;elapsed&quot;:12,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Función</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> pandas_groupby(df):</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df.groupby(<span class="st">"category"</span>)[<span class="st">"value1"</span>].agg([<span class="st">"mean"</span>, <span class="st">"std"</span>, <span class="st">"count"</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Explicación paso a paso:</p>
+<ol type="1">
+<li><code>groupby("category")</code>:
+<ul>
+<li>Agrupa las filas del DataFrame según los valores únicos de la columna “category”.</li>
+<li>Por ejemplo, si category tiene valores [“A”, “B”, “C”], se crean 3 grupos.</li>
+</ul></li>
+<li><code>["value1"]</code>:
+<ul>
+<li>Seleccionamos la columna sobre la cual queremos calcular estadísticas.</li>
+<li>Es decir, ignoramos otras columnas como “value2”.</li>
+</ul></li>
+<li><code>agg(["mean", "std", "count"])</code>:
+<ul>
+<li>Aplicamos múltiples funciones de agregación sobre cada grupo:</li>
+<li>mean: promedio de los valores</li>
+<li>std: desviación estándar (qué tan dispersos están los datos)</li>
+<li>count: cantidad de filas en el grupo</li>
+</ul></li>
+<li>El resultado es un nuevo DataFrame donde:
+<ul>
+<li>Cada fila representa una categoría</li>
+<li>Cada columna representa una métrica calculada</li>
+</ul></li>
+</ol>
+<div id="w7DTjo6Ir8ZP" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008697494,&quot;user_tz&quot;:180,&quot;elapsed&quot;:311,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-outputid="3dd0313e-4635-4275-f406-d5a964792cb5" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejecución de ejemplo</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>grouped_example <span class="op">=</span> pandas_groupby(df_pandas)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(grouped_example.head())</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              mean       std    count
+category                             
+A         0.002027  1.000471   998453
+B        -0.000050  0.999947  1000392
+C         0.000749  0.999491  1000503
+D        -0.001385  1.000060  1000446
+E         0.000693  1.001672  1000206</code></pre>
+</div>
+</div>
+</section>
+<section id="detalle-pandas_join" class="level4">
+<h4 class="anchored" data-anchor-id="detalle-pandas_join">Detalle <code>pandas_join</code></h4>
+<p>Esta función combina el DataFrame original con una tabla auxiliar (lookup).</p>
+<div id="_ZUoK6P2p6I8" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008697506,&quot;user_tz&quot;:180,&quot;elapsed&quot;:11,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Función</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> pandas_join(df):</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Tabla de referencia (lookup table)</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    lookup <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"category"</span>: categories,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"weight"</span>: np.linspace(<span class="fl">1.0</span>, <span class="fl">2.0</span>, n_categories).astype(np.float32)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df.merge(lookup, on<span class="op">=</span><span class="st">"category"</span>, how<span class="op">=</span><span class="st">"left"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Explicación paso a paso</p>
+<ol type="1">
+<li><code>lookup</code> (tabla de referencia):
+<ul>
+<li>Es un DataFrame pequeño que contiene información adicional.</li>
+<li>En este caso, simplemente asigna un “peso” (weight) a cada categoría.</li>
+</ul></li>
+<li><code>merge(...)</code>:
+<ul>
+<li>Es la función de pandas para combinar dos DataFrames.</li>
+<li>Similar a un JOIN en SQL.</li>
+</ul></li>
+<li>Parámetros clave:
+<ul>
+<li><code>on="category"</code>: Indica la columna común que se usará para hacer la unión.</li>
+<li><code>how="left"</code>: Tipo de join que mantiene todas las filas del DataFrame original.</li>
+</ul></li>
+</ol>
+<div id="Qs6zOp2ctkjM" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008698442,&quot;user_tz&quot;:180,&quot;elapsed&quot;:935,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-outputid="5d4bce78-f194-49ce-f758-0ddf60e8ee50" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejecución de ejemplo</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>joined_example <span class="op">=</span> pandas_join(df_pandas)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(joined_example.head())</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   id category    value1  value2  weight
+0   0        D -0.957101     715    1.75
+1   1        E  2.132025     990    2.00
+2   2        C -0.022485     400    1.50
+3   3        E  0.196817     744    2.00
+4   4        E -0.369941     352    2.00</code></pre>
+</div>
+</div>
+<p><strong>Actividad:</strong> Investiga sobre los diferentes tipos de Join y compara sus casos de uso.</p>
+</section>
+</section>
+<section id="benchmarking-para-cudf-gpu" class="level3">
+<h3 class="anchored" data-anchor-id="benchmarking-para-cudf-gpu">Benchmarking para cuDF (GPU)</h3>
+<p>Ahora, repetimos las mismas operaciones utilizando cuDF sobre la GPU.</p>
+<div id="ca561ad0" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008699792,&quot;user_tz&quot;:180,&quot;elapsed&quot;:1351,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-outputid="00e7809d-4297-462b-fc60-2438acb798c2" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">not</span> CUDF_AVAILABLE:</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"cuDF not available: skipping GPU benchmarks."</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> cudf</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"=== cuDF (GPU) benchmarks ==="</span>)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 1. Cargar CSV</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    gdf, t_load_cudf <span class="op">=</span> benchmark(cudf.read_csv, csv_path)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"cuDF - load CSV: </span><span class="sc">{</span>t_load_cudf<span class="sc">:.3f}</span><span class="ss"> seconds"</span>)</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 2. Filtrado simple</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> cudf_filter(gdf_):</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> gdf_[(gdf_[<span class="st">"value1"</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (gdf_[<span class="st">"value2"</span>] <span class="op">&gt;</span> <span class="dv">500</span>)]</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>    filtered_cudf, t_filter_cudf <span class="op">=</span> benchmark(cudf_filter, gdf)</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"cuDF - filter: </span><span class="sc">{</span>t_filter_cudf<span class="sc">:.3f}</span><span class="ss"> seconds"</span>)</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 3. Agrupación Groupby</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> cudf_groupby(gdf_):</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> gdf_.groupby(<span class="st">"category"</span>)[<span class="st">"value1"</span>].agg([<span class="st">"mean"</span>, <span class="st">"std"</span>, <span class="st">"count"</span>])</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>    grouped_cudf, t_group_cudf <span class="op">=</span> benchmark(cudf_groupby, gdf)</span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"cuDF - groupby: </span><span class="sc">{</span>t_group_cudf<span class="sc">:.3f}</span><span class="ss"> seconds"</span>)</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 4. Join / merge (no CuPy needed; use NumPy array directly)</span></span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> cudf_join(gdf_):</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>        weights_np <span class="op">=</span> np.linspace(<span class="fl">1.0</span>, <span class="fl">2.0</span>, n_categories).astype(np.float32)</span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>        lookup_gdf <span class="op">=</span> cudf.DataFrame({</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>            <span class="st">"category"</span>: categories,</span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>            <span class="st">"weight"</span>: weights_np,</span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> gdf_.merge(lookup_gdf, on<span class="op">=</span><span class="st">"category"</span>, how<span class="op">=</span><span class="st">"left"</span>)</span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>    joined_cudf, t_join_cudf <span class="op">=</span> benchmark(cudf_join, gdf)</span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"cuDF - join: </span><span class="sc">{</span>t_join_cudf<span class="sc">:.3f}</span><span class="ss"> seconds"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>=== cuDF (GPU) benchmarks ===
+cuDF - load CSV: 0.898 seconds
+cuDF - filter: 0.121 seconds
+cuDF - groupby: 0.160 seconds
+cuDF - join: 0.167 seconds</code></pre>
+</div>
+</div>
+<section id="detalle-cudf_join" class="level4">
+<h4 class="anchored" data-anchor-id="detalle-cudf_join">Detalle <code>cudf_join</code></h4>
+<p>La función cudf_join realiza un join entre un DataFrame en GPU (cuDF) y una tabla de referencia también en formato cuDF.</p>
+<div id="lEjipFv7zBbq" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008699797,&quot;user_tz&quot;:180,&quot;elapsed&quot;:4,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Función</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> cudf_join(gdf_):</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generamos los pesos como un arreglo de NumPy (en CPU)</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    weights_np <span class="op">=</span> np.linspace(<span class="fl">1.0</span>, <span class="fl">2.0</span>, n_categories).astype(np.float32)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Creamos un DataFrame cuDF (en GPU) a partir de datos en CPU</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    lookup_gdf <span class="op">=</span> cudf.DataFrame({</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"category"</span>: categories,</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"weight"</span>: weights_np,</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Realizamos el merge en GPU</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> gdf_.merge(lookup_gdf, on<span class="op">=</span><span class="st">"category"</span>, how<span class="op">=</span><span class="st">"left"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="QdWjSq8O1jw3" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008699849,&quot;user_tz&quot;:180,&quot;elapsed&quot;:48,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-outputid="3e83a95a-8fe0-4568-c270-79a2ef426907" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ejecución de ejemplo</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>joined_gpu_example <span class="op">=</span> cudf_join(gdf)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(joined_gpu_example.head())</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     id category    value1  value2  weight
+0  2208        E -1.047718     729    2.00
+1  2209        E  0.438955     509    2.00
+2  2210        B  0.285953      43    1.25
+3  2211        B  1.027694     287    1.25
+4  2212        E  0.091374     258    2.00</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="tabla-resumen-de-resultados" class="level3">
+<h3 class="anchored" data-anchor-id="tabla-resumen-de-resultados">Tabla resumen de resultados</h3>
+<p>Se recopilan todos los tiempos de ejecución en una única tabla para comparar directamente pandas (CPU) y cuDF (GPU).</p>
+<div id="079817c7" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008699881,&quot;user_tz&quot;:180,&quot;elapsed&quot;:31,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-outputid="aad0e4b3-a829-4492-c8bd-b8d7b1907c61" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> []</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Resultados Pandas</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>results.append((<span class="st">"load_csv"</span>, <span class="st">"pandas"</span>, t_load_pandas))</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>results.append((<span class="st">"filter"</span>, <span class="st">"pandas"</span>, t_filter_pandas))</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>results.append((<span class="st">"groupby"</span>, <span class="st">"pandas"</span>, t_group_pandas))</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>results.append((<span class="st">"join"</span>, <span class="st">"pandas"</span>, t_join_pandas))</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Resultados cuDF (si están disponibles)</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> CUDF_AVAILABLE:</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>    results.append((<span class="st">"load_csv"</span>, <span class="st">"cuDF"</span>, t_load_cudf))</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>    results.append((<span class="st">"filter"</span>, <span class="st">"cuDF"</span>, t_filter_cudf))</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>    results.append((<span class="st">"groupby"</span>, <span class="st">"cuDF"</span>, t_group_cudf))</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>    results.append((<span class="st">"join"</span>, <span class="st">"cuDF"</span>, t_join_cudf))</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>results_df <span class="op">=</span> pd.DataFrame(results, columns<span class="op">=</span>[<span class="st">"operation"</span>, <span class="st">"library"</span>, <span class="st">"time_sec"</span>])</span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>results_pivot <span class="op">=</span> results_df.pivot(index<span class="op">=</span><span class="st">"operation"</span>, columns<span class="op">=</span><span class="st">"library"</span>, values<span class="op">=</span><span class="st">"time_sec"</span>)</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> CUDF_AVAILABLE:</span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>    results_pivot[<span class="st">"speedup_cuDF_vs_pandas"</span>] <span class="op">=</span> results_pivot[<span class="st">"pandas"</span>] <span class="op">/</span> results_pivot[<span class="st">"cuDF"</span>]</span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>results_pivot</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
+<div id="df-5ac5267d-5da2-4083-bb8d-8262104961a3" class="colab-df-container">
+    <div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th">library</th>
+<th data-quarto-table-cell-role="th">cuDF</th>
+<th data-quarto-table-cell-role="th">pandas</th>
+<th data-quarto-table-cell-role="th">speedup_cuDF_vs_pandas</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">operation</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">filter</th>
+<td>0.120701</td>
+<td>0.080206</td>
+<td>0.664502</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">groupby</th>
+<td>0.160106</td>
+<td>0.354458</td>
+<td>2.213900</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">join</th>
+<td>0.166596</td>
+<td>0.558624</td>
+<td>3.353173</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">load_csv</th>
+<td>0.898082</td>
+<td>1.557485</td>
+<td>1.734235</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+    <div class="colab-df-buttons">
+
+  <div class="colab-df-container">
+    <button class="colab-df-convert" onclick="convertToInteractive('df-5ac5267d-5da2-4083-bb8d-8262104961a3')" title="Convert this dataframe to an interactive table." style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 -960 960 960">
+    <path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"></path>
+  </svg>
+    </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+    <script>
+      const buttonEl =
+        document.querySelector('#df-5ac5267d-5da2-4083-bb8d-8262104961a3 button.colab-df-convert');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      async function convertToInteractive(key) {
+        const element = document.querySelector('#df-5ac5267d-5da2-4083-bb8d-8262104961a3');
+        const dataTable =
+          await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                    [key], {});
+        if (!dataTable) return;
+
+        const docLinkHtml = 'Like what you see? Visit the ' +
+          '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+          + ' to learn more about interactive tables.';
+        element.innerHTML = '';
+        dataTable['output_type'] = 'display_data';
+        await google.colab.output.renderOutput(dataTable, element);
+        const docLink = document.createElement('div');
+        docLink.innerHTML = docLinkHtml;
+        element.appendChild(docLink);
+      }
+    </script>
+  </div>
+
+
+  <div id="id_851d413d-c76e-455b-b250-f8f47b3b2226">
+    <style>
+      .colab-df-generate {
+        background-color: #E8F0FE;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: none;
+        fill: #1967D2;
+        height: 32px;
+        padding: 0 0 0 0;
+        width: 32px;
+      }
+
+      .colab-df-generate:hover {
+        background-color: #E2EBFA;
+        box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+        fill: #174EA6;
+      }
+
+      [theme=dark] .colab-df-generate {
+        background-color: #3B4455;
+        fill: #D2E3FC;
+      }
+
+      [theme=dark] .colab-df-generate:hover {
+        background-color: #434B5C;
+        box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+        filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+        fill: #FFFFFF;
+      }
+    </style>
+    <button class="colab-df-generate" onclick="generateWithVariable('results_pivot')" title="Generate code using this dataframe." style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 0 24 24" width="24px">
+    <path d="M7,19H8.4L18.45,9,17,7.55,7,17.6ZM5,21V16.75L18.45,3.32a2,2,0,0,1,2.83,0l1.4,1.43a1.91,1.91,0,0,1,.58,1.4,1.91,1.91,0,0,1-.58,1.4L9.25,21ZM18.45,9,17,7.55Zm-12,3A5.31,5.31,0,0,0,4.9,8.1,5.31,5.31,0,0,0,1,6.5,5.31,5.31,0,0,0,4.9,4.9,5.31,5.31,0,0,0,6.5,1,5.31,5.31,0,0,0,8.1,4.9,5.31,5.31,0,0,0,12,6.5,5.46,5.46,0,0,0,6.5,12Z"></path>
+  </svg>
+    </button>
+    <script>
+      (() => {
+      const buttonEl =
+        document.querySelector('#id_851d413d-c76e-455b-b250-f8f47b3b2226 button.colab-df-generate');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      buttonEl.onclick = () => {
+        google.colab.notebook.generateWithVariable('results_pivot');
+      }
+      })();
+    </script>
+  </div>
+
+    </div>
+  </div>
+</div>
+</div>
+<p>La tabla anterior resume el tiempo de ejecución de cada operación utilizando pandas (CPU) y cuDF (GPU), además del factor de aceleración (speedup) cuando cuDF está disponible.</p>
+</section>
+</section>
+<section id="conclusiones" class="level2">
+<h2 class="anchored" data-anchor-id="conclusiones">3. Conclusiones</h2>
+<section id="observaciones-relevantes" class="level3">
+<h3 class="anchored" data-anchor-id="observaciones-relevantes">Observaciones relevantes:</h3>
+<ul>
+<li><p>En datasets pequeños, el costo de transferir datos entre CPU y GPU puede reducir significativamente, o incluso anular, los beneficios de utilizar la GPU.</p></li>
+<li><p>En datasets grandes (millones de filas), cuDF puede ofrecer mejoras de rendimiento importantes, especialmente en operaciones como groupby y join, debido al alto grado de paralelismo y al ancho de banda de memoria de la GPU.</p></li>
+<li><p>La similitud entre la API de pandas y cuDF facilita la migración de código, pero no todas las funcionalidades de pandas están soportadas. En particular, operaciones que dependen de objetos arbitrarios de Python o funciones complejas con .apply pueden no estar disponibles o no estar optimizadas en GPU.</p></li>
+<li><p>El rendimiento observado depende no solo del tipo de operación, sino también del flujo completo de datos. Factores como la cantidad de transferencias entre CPU y GPU, el tamaño del dataset y la naturaleza de las transformaciones influyen directamente en los resultados.</p></li>
+<li><p>Las operaciones vectorizadas y estructuradas (como filtros, agregaciones y joins) tienden a beneficiarse más del uso de GPU, mientras que operaciones más secuenciales o difíciles de paralelizar pueden no mostrar mejoras significativas.</p></li>
+<li><p>La disponibilidad de memoria en la GPU puede convertirse en una limitación en comparación con la memoria RAM del sistema, especialmente en datasets muy grandes.</p></li>
+</ul>
+<p>En conjunto, estos resultados permiten entender que el uso de GPU no siempre implica una mejora automática de rendimiento, sino que depende del contexto, el tamaño de los datos y el tipo de operaciones realizadas.</p>
+</section>
+<section id="similitudes-y-diferencias-en-la-api" class="level3">
+<h3 class="anchored" data-anchor-id="similitudes-y-diferencias-en-la-api">Similitudes y diferencias en la API</h3>
+<ul>
+<li><p>cuDF ofrece una API de DataFrames diseñada para ser intencionalmente similar a pandas (<code>DataFrame</code>, <code>Series</code>, <code>Index</code>, <code>read_csv</code>, <code>merge</code>, <code>groupby</code>, etc.). Esto permite que muchos flujos de trabajo existentes puedan adaptarse a GPU con cambios mínimos en el código.</p></li>
+<li><p>Sin embargo, cuDF no es un reemplazo completamente transparente (drop-in replacement) de pandas en todos los casos:</p>
+<ul>
+<li>cuDF no soporta objetos arbitrarios de Python dentro de las columnas. Aunque las columnas de texto existen, están implementadas mediante estructuras optimizadas para GPU y suelen reportarse como tipo <code>object</code>, pero no tienen la misma flexibilidad que en pandas.</li>
+<li>Operaciones como <code>.apply</code> y otras que dependen de funciones definidas por el usuario tienen restricciones. En cuDF, estas funciones deben ser compatibles con ejecución en GPU (device functions), lo que limita el uso de ciertas construcciones de Python (por ejemplo, estructuras complejas o dependencias externas).</li>
+</ul></li>
+<li><p>Versiones más recientes introducen un modo acelerador de pandas (<code>cudf.pandas</code>), cuyo objetivo es ofrecer una mayor compatibilidad con la API de pandas, ejecutando operaciones en GPU de forma transparente cuando es posible.</p></li>
+</ul>
+<p>En general, cuDF destaca especialmente en datasets grandes, numéricos o estructurados, donde las operaciones pueden vectorizarse y paralelizarse eficientemente. Por su parte, pandas sigue siendo una herramienta altamente flexible, adecuada para datasets pequeños o medianos, así como para casos donde se requiere mayor libertad en el uso de lógica personalizada o cuando no se dispone de GPU.</p>
+</section>
+<section id="consideraciones-prácticas-cpu-vs-gpu" class="level3">
+<h3 class="anchored" data-anchor-id="consideraciones-prácticas-cpu-vs-gpu">Consideraciones prácticas: CPU vs GPU</h3>
+<p>Al decidir entre pandas (CPU) y cuDF (GPU), es importante considerar varios factores:</p>
+<ul>
+<li><p><strong>Tamaño del dataset:</strong> Las GPUs muestran su mayor ventaja en datasets medianos a grandes, donde el paralelismo masivo compensa el costo de transferir datos desde la CPU. En datasets pequeños, este costo puede dominar el tiempo total.</p></li>
+<li><p><strong>Memoria disponible:</strong> La memoria de la GPU suele ser significativamente menor que la memoria RAM del sistema. Esto implica que datasets muy grandes pueden no caber completamente en GPU, requiriendo técnicas como unified memory o procesamiento por bloques (out-of-core).</p></li>
+<li><p><strong>Tipo de operaciones:</strong> Operaciones vectorizadas y bien estructuradas (filtrado, agregaciones, joins) se benefician fuertemente del paralelismo de la GPU. En contraste, operaciones con lógica altamente personalizada, iterativa o difícil de paralelizar suelen ejecutarse de forma más eficiente en CPU.</p></li>
+<li><p><strong>Costo de transferencia de datos:</strong> Mover datos entre CPU y GPU no es gratuito. Si el flujo de trabajo implica múltiples transferencias, el beneficio de la GPU puede verse reducido.</p></li>
+<li><p><strong>Infraestructura y requisitos:</strong> cuDF requiere una GPU NVIDIA compatible con CUDA y un entorno correctamente configurado. En cambio, pandas funciona en prácticamente cualquier sistema con CPU, lo que lo hace más accesible y portable.</p></li>
+<li><p><strong>Madurez del ecosistema:</strong> pandas cuenta con un ecosistema muy amplio y consolidado, con gran cantidad de herramientas y extensiones. cuDF, aunque en constante evolución, puede presentar limitaciones en funcionalidades específicas o menor compatibilidad con ciertas librerías.</p></li>
+</ul>
+</section>
+</section>
+<section id="ejercicio-predicción-y-comparación-cpu-vs-gpu" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicio-predicción-y-comparación-cpu-vs-gpu">4. Ejercicio: Predicción y comparación CPU vs GPU</h2>
+<p>En este ejercicio se busca analizar un nuevo dataset, formular hipótesis sobre el rendimiento esperado en CPU y GPU, y luego validar dichas hipótesis mediante benchmarking.</p>
+<section id="generación-del-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="generación-del-dataset">Generación del dataset</h3>
+<p>Se generará un nuevo dataset sintético con características ligeramente distintas al anterior, introduciendo mayor cardinalidad y mayor número de columnas.</p>
+<div id="1YDXR6ZJDP_r" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008706770,&quot;user_tz&quot;:180,&quot;elapsed&quot;:6888,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-outputid="882e575c-6f93-4403-b121-f56046e28e45" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>N_ROWS <span class="op">=</span> <span class="dv">3_000_000</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>regions <span class="op">=</span> [<span class="st">"North"</span>, <span class="st">"South"</span>, <span class="st">"East"</span>, <span class="st">"West"</span>]</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>products <span class="op">=</span> [<span class="ss">f"P</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">"</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">20</span>)]  <span class="co"># mayor cardinalidad</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Generando dataset con </span><span class="sc">{</span>N_ROWS<span class="sc">:,}</span><span class="ss"> filas..."</span>)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>df_new <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"id"</span>: np.arange(N_ROWS, dtype<span class="op">=</span>np.int64),</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"region"</span>: np.random.choice(regions, size<span class="op">=</span>N_ROWS),</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"product"</span>: np.random.choice(products, size<span class="op">=</span>N_ROWS),</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"sales"</span>: np.random.gamma(shape<span class="op">=</span><span class="fl">2.0</span>, scale<span class="op">=</span><span class="fl">50.0</span>, size<span class="op">=</span>N_ROWS).astype(np.float32),</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"quantity"</span>: np.random.randint(<span class="dv">1</span>, <span class="dv">20</span>, size<span class="op">=</span>N_ROWS, dtype<span class="op">=</span>np.int32),</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>csv_new_path <span class="op">=</span> <span class="st">"synthetic_sales.csv"</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>df_new.to_csv(csv_new_path, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Dataset generado."</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Generando dataset con 3,000,000 filas...
+Dataset generado.</code></pre>
+</div>
+</div>
+</section>
+<section id="función-auxiliar-para-benchmarking-1" class="level3">
+<h3 class="anchored" data-anchor-id="función-auxiliar-para-benchmarking-1">Función auxiliar para benchmarking</h3>
+<p>Reutilizamos la del experimento anterior.</p>
+<div id="X6pNKnz66W2N" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008706770,&quot;user_tz&quot;:180,&quot;elapsed&quot;:5,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> benchmark(func, <span class="op">*</span>args, <span class="op">**</span>kwargs):</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> time.perf_counter()</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> func(<span class="op">*</span>args, <span class="op">**</span>kwargs)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    end <span class="op">=</span> time.perf_counter()</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result, end <span class="op">-</span> start</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="definición-de-operaciones" class="level3">
+<h3 class="anchored" data-anchor-id="definición-de-operaciones">Definición de operaciones</h3>
+<p>Implementa una serie de operaciones típicas sobre el dataset, tanto en pandas (CPU) como en cuDF (GPU). Replica exactamente las mismas transformaciones en ambos casos para poder comparar su rendimiento posteriormente.</p>
+<p>Implementa las siguientes operaciones:</p>
+<ul>
+<li><p>Carga de datos: Leer el archivo CSV generado previamente y almacenarlo en un DataFrame.</p></li>
+<li><p>Filtrado: Seleccionar únicamente las filas donde <code>sales &gt; 50</code> y <code>quantity &gt; 5</code>.</p></li>
+<li><p>Agregación: Agrupar los datos por la columna <code>product</code>, calculando las métricas promedio, suma y conteo sobre <code>sales</code>.</p></li>
+<li><p>Unión: Crear una tabla auxiliar con la columna <code>product</code> y una columna <code>price_factor</code> con valores entre 0.8 y 1.2 para luego realizar un left join con el dataset original usando la columna <code>product</code>.</p></li>
+</ul>
+<div id="3xZ1gMkfEkH-" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008706771,&quot;user_tz&quot;:180,&quot;elapsed&quot;:4,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> pandas</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="2THrTPltE3fd" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008706781,&quot;user_tz&quot;:180,&quot;elapsed&quot;:14,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> cuDF</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="predicciones-previas-al-benchmarking" class="level3">
+<h3 class="anchored" data-anchor-id="predicciones-previas-al-benchmarking">Predicciones previas al benchmarking</h3>
+<p>Antes de ejecutar cualquier medición de rendimiento, es importante formular hipótesis sobre el comportamiento esperado. El objetivo de esta sección no es “acertar”, sino razonar en base a las características del dataset y las operaciones definidas.</p>
+<p>Redacta al menos tres hipótesis considerando aspectos como:</p>
+<ul>
+<li>Tamaño del dataset</li>
+<li>Tipo de operaciones (filtrado, agregación, join)</li>
+<li>Nivel de paralelismo posible</li>
+<li>Costos de transferencia de datos</li>
+</ul>
+<hr>
+<p>Adicionalmente, responde brevemente las siguientes preguntas, justificando tus respuestas:</p>
+<ul>
+<li><p>¿Qué operación crees que será más rápida en GPU en comparación con CPU? ¿Por qué?</p></li>
+<li><p>¿Qué operación crees que tendrá menor diferencia entre CPU y GPU?</p></li>
+<li><p>¿Cómo influye la cardinalidad de product en la operación de groupby?</p></li>
+<li><p>¿Crees que el join será más costoso que en el dataset anterior? ¿Por qué?</p></li>
+<li><p>En este caso, ¿esperas que usar GPU valga la pena en general? Justifica considerando el tamaño del dataset y el tipo de operaciones.</p></li>
+</ul>
+</section>
+<section id="benchmark-en-pandas-cpu" class="level3">
+<h3 class="anchored" data-anchor-id="benchmark-en-pandas-cpu">Benchmark en pandas (CPU)</h3>
+<p>Utilizando las funciones definidas previamente, mide el tiempo de ejecución de cada operación mediante la función benchmark.</p>
+<div id="x_QbM_faIkhq" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008706782,&quot;user_tz&quot;:180,&quot;elapsed&quot;:11,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="benchmark-en-cudf-gpu" class="level3">
+<h3 class="anchored" data-anchor-id="benchmark-en-cudf-gpu">Benchmark en cuDF (GPU)</h3>
+<p>Repetir exactamente el mismo proceso anterior, pero utilizando las funciones equivalentes en cuDF.</p>
+<div id="lt2-q7HHIxXr" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008706782,&quot;user_tz&quot;:180,&quot;elapsed&quot;:10,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="análisis-de-resultados" class="level3">
+<h3 class="anchored" data-anchor-id="análisis-de-resultados">Análisis de resultados</h3>
+<p>Organiza los resultados obtenidos y compáralos con las predicciones realizadas previamente. Para esto, construye una tabla que resuma los tiempos de ejecución en CPU (pandas) y GPU (cuDF), junto con el speedup cuando sea posible.</p>
+<div id="CZWTYRquJa6T" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1774008706782,&quot;user_tz&quot;:180,&quot;elapsed&quot;:8,&quot;user&quot;:{&quot;displayName&quot;:&quot;HPG&quot;,&quot;userId&quot;:&quot;15110943123203895301&quot;}}}" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<hr>
+<p>Adicionalmente, responde a estas preguntas:</p>
+<ul>
+<li><p>¿Se cumplieron las predicciones realizadas previamente? Explicar en qué casos sí y en cuáles no.</p></li>
+<li><p>¿Qué operación mostró mayor aceleración en GPU? ¿Por qué esta operación se beneficia más del paralelismo?</p></li>
+<li><p>¿Qué operación mostró menor diferencia entre CPU y GPU? Relacionar con su complejidad y costo computacional.</p></li>
+<li><p>¿Qué rol crees que juega el tamaño del dataset en estos resultados? ¿Y los tipos de operación?</p></li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<script src="../../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

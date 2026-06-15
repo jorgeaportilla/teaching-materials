@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>lab3_regresion_lineal_logistica – Material Docente</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-6d98dc22342cdec766e9ba27c206e023.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.scss">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Material Docente</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">Inicio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">Sobre mí</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul>
+  <li><a href="#nota" id="toc-nota" class="nav-link active" data-scroll-target="#nota">Nota</a></li>
+  <li><a href="#motivación" id="toc-motivación" class="nav-link" data-scroll-target="#motivación">Motivación</a></li>
+  <li><a href="#regresión-lineal" id="toc-regresión-lineal" class="nav-link" data-scroll-target="#regresión-lineal">1. Regresión Lineal</a>
+  <ul class="collapse">
+  <li><a href="#regresión-lineal-en-acción" id="toc-regresión-lineal-en-acción" class="nav-link" data-scroll-target="#regresión-lineal-en-acción">Regresión lineal en acción</a>
+  <ul class="collapse">
+  <li><a href="#a-considerar" id="toc-a-considerar" class="nav-link" data-scroll-target="#a-considerar">A considerar:</a></li>
+  <li><a href="#configuración-del-entorno" id="toc-configuración-del-entorno" class="nav-link" data-scroll-target="#configuración-del-entorno">Configuración del Entorno</a></li>
+  </ul></li>
+  <li><a href="#regresión-lineal-con-el-dataset-de-california-housing" id="toc-regresión-lineal-con-el-dataset-de-california-housing" class="nav-link" data-scroll-target="#regresión-lineal-con-el-dataset-de-california-housing">Regresión Lineal con el Dataset de California Housing</a>
+  <ul class="collapse">
+  <li><a href="#análisis-exploratorio-de-datos" id="toc-análisis-exploratorio-de-datos" class="nav-link" data-scroll-target="#análisis-exploratorio-de-datos">Análisis exploratorio de datos</a></li>
+  <li><a href="#construcción-del-modelo-de-regresión-lineal" id="toc-construcción-del-modelo-de-regresión-lineal" class="nav-link" data-scroll-target="#construcción-del-modelo-de-regresión-lineal">Construcción del modelo de regresión lineal</a></li>
+  <li><a href="#entrena-al-modelo" id="toc-entrena-al-modelo" class="nav-link" data-scroll-target="#entrena-al-modelo">Entrena al modelo</a></li>
+  <li><a href="#validación-cruzada-cross-validation" id="toc-validación-cruzada-cross-validation" class="nav-link" data-scroll-target="#validación-cruzada-cross-validation">Validación Cruzada (Cross-Validation)</a></li>
+  <li><a href="#hacer-predicciones" id="toc-hacer-predicciones" class="nav-link" data-scroll-target="#hacer-predicciones">Hacer predicciones</a></li>
+  <li><a href="#evaluación-del-modelo" id="toc-evaluación-del-modelo" class="nav-link" data-scroll-target="#evaluación-del-modelo">Evaluación del modelo</a></li>
+  <li><a href="#visualización-de-la-línea-de-regresión" id="toc-visualización-de-la-línea-de-regresión" class="nav-link" data-scroll-target="#visualización-de-la-línea-de-regresión">Visualización de la línea de regresión</a></li>
+  <li><a href="#resumen" id="toc-resumen" class="nav-link" data-scroll-target="#resumen">Resumen</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#regresión-logística" id="toc-regresión-logística" class="nav-link" data-scroll-target="#regresión-logística">2. Regresión Logística</a>
+  <ul class="collapse">
+  <li><a href="#regresión-logística-en-acción" id="toc-regresión-logística-en-acción" class="nav-link" data-scroll-target="#regresión-logística-en-acción">Regresión logística en acción</a></li>
+  <li><a href="#regresión-logística-con-el-dataset-iris" id="toc-regresión-logística-con-el-dataset-iris" class="nav-link" data-scroll-target="#regresión-logística-con-el-dataset-iris">Regresión Logística con el Dataset Iris</a>
+  <ul class="collapse">
+  <li><a href="#explorando-el-conjunto-de-datos" id="toc-explorando-el-conjunto-de-datos" class="nav-link" data-scroll-target="#explorando-el-conjunto-de-datos">Explorando el conjunto de datos</a></li>
+  <li><a href="#simplificando-el-objetivo-de-la-clasificación-binaria" id="toc-simplificando-el-objetivo-de-la-clasificación-binaria" class="nav-link" data-scroll-target="#simplificando-el-objetivo-de-la-clasificación-binaria">Simplificando el objetivo de la clasificación binaria</a></li>
+  <li><a href="#análisis-exploratorio-de-datos-1" id="toc-análisis-exploratorio-de-datos-1" class="nav-link" data-scroll-target="#análisis-exploratorio-de-datos-1">Análisis exploratorio de datos</a></li>
+  <li><a href="#construyendo-el-modelo-de-regresión-logística" id="toc-construyendo-el-modelo-de-regresión-logística" class="nav-link" data-scroll-target="#construyendo-el-modelo-de-regresión-logística">Construyendo el modelo de regresión logística</a></li>
+  <li><a href="#entrena-al-modelo-1" id="toc-entrena-al-modelo-1" class="nav-link" data-scroll-target="#entrena-al-modelo-1">Entrena al modelo</a></li>
+  <li><a href="#validación-cruzada-cross-validation-1" id="toc-validación-cruzada-cross-validation-1" class="nav-link" data-scroll-target="#validación-cruzada-cross-validation-1">Validación Cruzada (Cross-Validation)</a></li>
+  <li><a href="#hacer-predicciones-1" id="toc-hacer-predicciones-1" class="nav-link" data-scroll-target="#hacer-predicciones-1">Hacer predicciones</a></li>
+  <li><a href="#evaluación-del-modelo-1" id="toc-evaluación-del-modelo-1" class="nav-link" data-scroll-target="#evaluación-del-modelo-1">Evaluación del modelo</a></li>
+  <li><a href="#interpretación" id="toc-interpretación" class="nav-link" data-scroll-target="#interpretación">Interpretación</a></li>
+  <li><a href="#matriz-de-confusión" id="toc-matriz-de-confusión" class="nav-link" data-scroll-target="#matriz-de-confusión">Matriz de confusión</a></li>
+  <li><a href="#informe-de-clasificación" id="toc-informe-de-clasificación" class="nav-link" data-scroll-target="#informe-de-clasificación">Informe de clasificación</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#pregunta-final.-llamar-al-profesor-o-al-tutor" id="toc-pregunta-final.-llamar-al-profesor-o-al-tutor" class="nav-link" data-scroll-target="#pregunta-final.-llamar-al-profesor-o-al-tutor">PREGUNTA FINAL. (LLAMAR AL PROFESOR O AL TUTOR)</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+
+
+
+
+<div style="text-align: center;">
+<pre><code>&lt;img src="https://mejores.com/wp-content/uploads/2020/08/Universidad-Tecnica-Federico-Santa-Maria.jpg" title="UTFSM" width="20%" height="20%" /&gt;</code></pre>
+</div>
+<hr style="height:2px;border:none">
+<h1 align="center">
+EIN087B CIENCIA DE DATOS-2026
+</h1>
+<h1 align="center">
+Introducción a la Regresión Lineal y Logística en Python
+</h1>
+<hr style="height:2px;border:none">
+<p><strong>Temas</strong> * Regresión Lineal. * Métricas e interpretación de predicciones. * Regresión Logística. * Métricas e interpretación de predicciones.</p>
+<strong>Indicaciones</strong> * Fecha de entrega: <strong>1 de abril</strong>. * Formato: Jupyter Notebook (.ipynb).
+<hr style="height:2px;border:none">
+<section id="nota" class="level2">
+<h2 class="anchored" data-anchor-id="nota">Nota</h2>
+<p>El aprendizaje automático a menudo parece intimidante a primera vista, pero en esencia se basa en conceptos matemáticos con los que ya estamos familiarizados. Desmitifiquemos dos técnicas fundamentales de regresión a través de sus fundamentos matemáticos.</p>
+</section>
+<section id="motivación" class="level2">
+<h2 class="anchored" data-anchor-id="motivación">Motivación</h2>
+<p>Las técnicas de regresión son fundamentales para el aprendizaje automático porque son simples, interpretables e increíblemente versátiles. Ya sea que esté prediciendo los precios de las viviendas, determinando los resultados de los exámenes o diagnosticando afecciones médicas, la regresión ayuda a descubrir relaciones en los datos y hacer predicciones informadas.</p>
+</section>
+<section id="regresión-lineal" class="level1">
+<h1>1. Regresión Lineal</h1>
+<p>¿Recuerdas la ecuación de línea recta de tus clases de matemáticas? ¡Ahí es exactamente donde comienza la regresión lineal! La ecuación básica es maravillosamente simple:</p>
+<p><span class="math display">\[y = mx + b\]</span></p>
+<p>En el aprendizaje automático, lo presentamos de forma un poco más formal como:</p>
+<p><span class="math display">\[y = \beta_0 + \beta_1 x + \epsilon\]</span></p>
+<p>Donde:</p>
+<ul>
+<li><p><span class="math inline">\(y\)</span> es nuestra variable objetivo (lo que estamos tratando de predecir)</p></li>
+<li><p><span class="math inline">\(\beta_0\)</span> es la intersección con el eje y (donde nuestra línea cruza el eje y)</p></li>
+<li><p><span class="math inline">\(\beta_1\)</span> es la pendiente (cuánto cambia y por cada cambio de unidad en x)</p></li>
+<li><p><span class="math inline">\(\epsilon\)</span> es nuestro término de error (¡porque los datos reales no son perfectos!)</p></li>
+</ul>
+<section id="regresión-lineal-en-acción" class="level2">
+<h2 class="anchored" data-anchor-id="regresión-lineal-en-acción">Regresión lineal en acción</h2>
+<p>Imagina que eres un agente inmobiliario que quiere predecir el precio de una casa basándose en factores como la cantidad de habitaciones y la tasa de criminalidad en la zona. Al utilizar la regresión lineal, puedes desarrollar un modelo que aprenda de datos históricos para realizar predicciones precisas de precios de casas nuevas. Esto te permite no sólo tomar decisiones informadas sino también explicar a tus clientes cómo cada factor contribuye al precio general.</p>
+<section id="a-considerar" class="level3">
+<h3 class="anchored" data-anchor-id="a-considerar">A considerar:</h3>
+<p>La regresión lineal es más efectiva cuando existe una relación lineal entre la(s) variable(s) independiente (características) y la variable dependiente (objetivo). Esto significa que el valor objetivo aumenta o disminuye proporcionalmente con el cambio en los valores de entrada.</p>
+</section>
+<section id="configuración-del-entorno" class="level3">
+<h3 class="anchored" data-anchor-id="configuración-del-entorno">Configuración del Entorno</h3>
+<div id="8c68933d" class="cell" data-outputid="100c1e94-2588-46fa-9bfa-cf2d5c70709a">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pip install numpy pandas matplotlib seaborn scikit<span class="op">-</span>learn</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="regresión-lineal-con-el-dataset-de-california-housing" class="level2">
+<h2 class="anchored" data-anchor-id="regresión-lineal-con-el-dataset-de-california-housing">Regresión Lineal con el Dataset de California Housing</h2>
+<div id="b499d780" class="cell" data-outputid="12d47b32-ee7d-45a8-ce03-c27f00f07b20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> fetch_california_housing</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> fetch_california_housing()</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(data.data, columns<span class="op">=</span>data.feature_names)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'MedHouseVal'</span>] <span class="op">=</span> data.target</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="3bbcee3c" class="cell" data-outputid="6884c9b3-fcb3-4d62-f6aa-0a5b60b6cf9a">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df.shape</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df.columns</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="actividad-1.1" class="level4">
+<h4 class="anchored" data-anchor-id="actividad-1.1">Actividad 1.1:</h4>
+<p>Según los resultados obtenidos en el código anterior, explica a profunidad y en detalle la información contenida en el dataset. Si lo consideras necesario, puedes aplicar normalización u otras operaciones para un mejor entendimiento.</p>
+</section>
+<section id="análisis-exploratorio-de-datos" class="level3">
+<h3 class="anchored" data-anchor-id="análisis-exploratorio-de-datos">Análisis exploratorio de datos</h3>
+<div id="75a7473c" class="cell" data-outputid="8a18ae70-021e-4d12-f925-2ba3533ad5e0">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(x<span class="op">=</span>df[<span class="st">'MedInc'</span>], y<span class="op">=</span>df[<span class="st">'MedHouseVal'</span>])</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Ingreso medio"</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Valor medio de vivienda"</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Relación entre ingreso y precio"</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="actvidad-1.2" class="level4">
+<h4 class="anchored" data-anchor-id="actvidad-1.2">Actvidad 1.2:</h4>
+<p>Agrega más visualizaciones para explorar otras relaciones entre las características y el valor de la vivienda.</p>
+<p>Por ejemplo, puedes crear un mapa de calor para mostrar la correlación entre las características, o un gráfico de dispersión para mostrar la relación entre la latitud y el valor de la vivienda.</p>
+<p>Debes generar un mínimo de 5 gráficos diferentes para representar la información contenida en el dataset.</p>
+<div id="bcfaa34e" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Agregue más visualizaciones para explorar otras relaciones entre las características y el valor de la vivienda.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="construcción-del-modelo-de-regresión-lineal" class="level3">
+<h3 class="anchored" data-anchor-id="construcción-del-modelo-de-regresión-lineal">Construcción del modelo de regresión lineal</h3>
+<div id="9670c247" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error, r2_score</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df[[<span class="st">'MedInc'</span>]]</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df[<span class="st">'MedHouseVal'</span>]</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="entrena-al-modelo" class="level3">
+<h3 class="anchored" data-anchor-id="entrena-al-modelo">Entrena al modelo</h3>
+<div id="1ba7e1aa" class="cell" data-outputid="d545d707-a1a2-409d-93d2-dda469f52c7e">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> LinearRegression()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>model.fit(X_train, y_train)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="validación-cruzada-cross-validation" class="level3">
+<h3 class="anchored" data-anchor-id="validación-cruzada-cross-validation">Validación Cruzada (Cross-Validation)</h3>
+<section id="actividad-1.3" class="level4">
+<h4 class="anchored" data-anchor-id="actividad-1.3">Actividad 1.3:</h4>
+<p>La validación cruzada permite evaluar la capacidad de generalización del modelo utilizando múltiples particiones del conjunto de datos. En este caso, se necesita que genere la validación cruzada k-fold con k=5.</p>
+<div id="6fcf747f" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> cross_val_score</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Validación cruzada con 5 folds</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="hacer-predicciones" class="level3">
+<h3 class="anchored" data-anchor-id="hacer-predicciones">Hacer predicciones</h3>
+<div id="a05d0e24" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> model.predict(X_test)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="actividad-1.4" class="level4">
+<h4 class="anchored" data-anchor-id="actividad-1.4">Actividad 1.4:</h4>
+<p>Genera las predicciones con tu modelo entrenado utilizando CV. Y registra las diferencias.</p>
+</section>
+</section>
+<section id="evaluación-del-modelo" class="level3">
+<h3 class="anchored" data-anchor-id="evaluación-del-modelo">Evaluación del modelo</h3>
+<p>Usaremos las métricas:</p>
+<ul>
+<li><p>Error cuadrático medio (MSE): Mide el promedio de las diferencias al cuadrado entre los valores reales y previstos.</p></li>
+<li><p>Puntuación R² (coeficiente de determinación): Indica qué tan bien el modelo explica la variabilidad del objetivo.</p></li>
+</ul>
+<div id="7ab37870" class="cell" data-outputid="9e323896-a447-4363-ef9c-299f9335a902">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>mse <span class="op">=</span> mean_squared_error(y_test, y_pred)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>r2 <span class="op">=</span> r2_score(y_test, y_pred)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"MSE:"</span>, mse)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"R2:"</span>, r2)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="visualización-de-la-línea-de-regresión" class="level3">
+<h3 class="anchored" data-anchor-id="visualización-de-la-línea-de-regresión">Visualización de la línea de regresión</h3>
+<section id="actividad-1.5" class="level4">
+<h4 class="anchored" data-anchor-id="actividad-1.5">Actividad 1.5:</h4>
+<p>Genera la gráfica de la línea de regresión sobre los datos de prueba para visualizar qué tan bien encaja el modelo. Agrega una descripción detallada de lo que representa la gráfica solicitada.</p>
+<div id="f7644e38" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfica de los valores reales vs. los valores predichos</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="resumen" class="level3">
+<h3 class="anchored" data-anchor-id="resumen">Resumen</h3>
+<section id="actividad-1.6" class="level4">
+<h4 class="anchored" data-anchor-id="actividad-1.6">Actividad 1.6:</h4>
+<p>Genera un breve resumen de los pasos para generar la regresión lineal de un dataset, empezando desde la carga de datos.</p>
+</section>
+</section>
+</section>
+</section>
+<section id="regresión-logística" class="level1">
+<h1>2. Regresión Logística</h1>
+<p>La regresión logística funciona mejor para tareas de clasificación binaria, donde el resultado sólo puede pertenecer a una de dos categorías (p.&nbsp;ej., Sí/No, 0/1). El modelo funciona bien cuando los puntos de datos se pueden separar mediante un límite lineal. Los ejemplos incluyen:</p>
+<ul>
+<li><p>Clasificar correos electrónicos como spam o no spam.</p></li>
+<li><p>Determinar si un cliente comprará un producto o no.</p></li>
+<li><p>Predecir si un estudiante aprobará o reprobará en función de sus horas de estudio.</p></li>
+</ul>
+<p>Si una simple línea divisoria puede separar eficazmente las dos categorías, la regresión logística es una opción adecuada y poderosa para realizar estas clasificaciones.</p>
+<p>La regresión logística utiliza la función sigmoide para modelar probabilidades:</p>
+<p><span class="math display">\[\sigma(z) = \frac{1}{1 + e^{-z}}\]</span></p>
+<p>La belleza de esta función radica en sus propiedades:</p>
+<ul>
+<li><p>Exprime cualquier entrada en un rango entre 0 y 1</p></li>
+<li><p>Cuando <span class="math inline">\(z = 0, \sigma (z) = 0,5\)</span></p></li>
+<li><p>Cuando <span class="math inline">\(z\)</span> tiende a ∞, <span class="math inline">\(\sigma (z)\)</span> tiende a 1</p></li>
+<li><p>Cuando <span class="math inline">\(z\)</span> tiende a -∞, <span class="math inline">\(\sigma (z)\)</span> tiende a 0</p></li>
+</ul>
+<section id="actividad-2.1" class="level4">
+<h4 class="anchored" data-anchor-id="actividad-2.1">Actividad 2.1:</h4>
+<p>Grafica la función <span class="math inline">\(\sigma(z)\)</span> para que pueda entender mejor las propiedades antes mencionadas, explicándolas en tus propias palabras.</p>
+<div id="0c820911" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfica de la función de regresión logística</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="regresión-logística-en-acción" class="level2">
+<h2 class="anchored" data-anchor-id="regresión-logística-en-acción">Regresión logística en acción</h2>
+<p>Consideremos ahora a un profesor que quiere predecir si un estudiante aprobará o reprobará un examen basándose en sus hábitos de estudio. La regresión logística puede tomar datos sobre las horas de estudio, la asistencia y otros factores y predecir la probabilidad de que un estudiante apruebe. Este modelo puede ayudar a los profesores a identificar a los estudiantes en riesgo e intervenir tempranamente para brindar apoyo adicional.</p>
+</section>
+<section id="regresión-logística-con-el-dataset-iris" class="level2">
+<h2 class="anchored" data-anchor-id="regresión-logística-con-el-dataset-iris">Regresión Logística con el Dataset Iris</h2>
+<div id="57c6f1ea" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_iris</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> load_iris()</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(data.data, columns<span class="op">=</span>data.feature_names)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'species'</span>] <span class="op">=</span> data.target</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="explorando-el-conjunto-de-datos" class="level3">
+<h3 class="anchored" data-anchor-id="explorando-el-conjunto-de-datos">Explorando el conjunto de datos</h3>
+<div id="1dacdf92" class="cell" data-outputid="dd814d7b-5665-4af6-ad2f-eede55959cb4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.shape)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.columns)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(data.DESCR)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="actividad-2.2" class="level4">
+<h4 class="anchored" data-anchor-id="actividad-2.2">Actividad 2.2:</h4>
+<p>Genera una descripción detallada de los resultados obtenidos con el código anterior.</p>
+</section>
+</section>
+<section id="simplificando-el-objetivo-de-la-clasificación-binaria" class="level3">
+<h3 class="anchored" data-anchor-id="simplificando-el-objetivo-de-la-clasificación-binaria">Simplificando el objetivo de la clasificación binaria</h3>
+<p>Filtraremos el conjunto de datos para crear un problema de clasificación binaria distinguiendo entre Setosa (0) y Not Setosa (1):</p>
+<div id="433f3340" class="cell" data-outputid="a106d398-521d-41ab-b05a-7a4ab8cc1dec">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[df[<span class="st">'species'</span>] <span class="op">!=</span> <span class="dv">2</span>]</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'species'</span>] <span class="op">=</span> df[<span class="st">'species'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="dv">0</span> <span class="cf">if</span> x <span class="op">==</span> <span class="dv">0</span> <span class="cf">else</span> <span class="dv">1</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="análisis-exploratorio-de-datos-1" class="level3">
+<h3 class="anchored" data-anchor-id="análisis-exploratorio-de-datos-1">Análisis exploratorio de datos</h3>
+<p>Visualizaremos ahora la relación entre la longitud del sépalo y el ancho del sépalo para ver cómo se distribuyen las clases:</p>
+<div id="cd0df003" class="cell" data-outputid="f1776120-4ce8-4ba6-ae6d-7f0b5c32dfd0">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(x<span class="op">=</span>df[<span class="st">'sepal length (cm)'</span>], y<span class="op">=</span>df[<span class="st">'sepal width (cm)'</span>], hue<span class="op">=</span>df[<span class="st">'species'</span>])</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Sepal Length (cm)"</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Sepal Width (cm)"</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Sepal Length vs Sepal Width (Setosa vs Not Setosa)"</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="actvidad-2.3" class="level4">
+<h4 class="anchored" data-anchor-id="actvidad-2.3">Actvidad 2.3:</h4>
+<p>Agrega más visualizaciones para explorar otras relaciones entre las características y el valor de la vivienda.</p>
+<p>Por ejemplo, puede crear un mapa de calor para mostrar la correlación entre las características.</p>
+<p>Otro ejemplo, puede crear un gráfico de dispersión.</p>
+<p>Debe generar minimo 3 gráficos diferentes los cuales representen la información contenida en el dataset.</p>
+</section>
+</section>
+<section id="construyendo-el-modelo-de-regresión-logística" class="level3">
+<h3 class="anchored" data-anchor-id="construyendo-el-modelo-de-regresión-logística">Construyendo el modelo de regresión logística</h3>
+<div id="935747a7" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score, confusion_matrix, classification_report</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df[[<span class="st">'sepal length (cm)'</span>, <span class="st">'sepal width (cm)'</span>]]</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df[<span class="st">'species'</span>]</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="entrena-al-modelo-1" class="level3">
+<h3 class="anchored" data-anchor-id="entrena-al-modelo-1">Entrena al modelo</h3>
+<div id="e1eb80fe" class="cell" data-outputid="b3d65ce3-bda7-4b7d-828e-10f666886093">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> LogisticRegression()</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>model.fit(X_train, y_train)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="validación-cruzada-cross-validation-1" class="level3">
+<h3 class="anchored" data-anchor-id="validación-cruzada-cross-validation-1">Validación Cruzada (Cross-Validation)</h3>
+<p>Para evaluar el desempeño del modelo de clasificación, se utiliza validación cruzada con la métrica de exactitud (accuracy).</p>
+<section id="actividad-2.4" class="level4">
+<h4 class="anchored" data-anchor-id="actividad-2.4">Actividad 2.4:</h4>
+<p>Agregue el código para poder evaluar la validación cruzada en el modelo propuesto.</p>
+<div id="3b54a731" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Validación cruzada con 5 folds</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="hacer-predicciones-1" class="level3">
+<h3 class="anchored" data-anchor-id="hacer-predicciones-1">Hacer predicciones</h3>
+<div id="20829c18" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> model.predict(X_test)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="actividad-2.6" class="level4">
+<h4 class="anchored" data-anchor-id="actividad-2.6">Actividad 2.6:</h4>
+<p>Genera la gráfica de la regresión logística.</p>
+<div id="59038a22" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Genere la gráfica de la regresión logística</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="evaluación-del-modelo-1" class="level3">
+<h3 class="anchored" data-anchor-id="evaluación-del-modelo-1">Evaluación del modelo</h3>
+<p>Para este caso, utilizaremos la métrica de precisión. Esta mide la proporción entre las instancias predichas correctamente y el número total de instancias.</p>
+<p><span class="math display">\[ \text {Precisión} = \frac{\text {Número de predicciones correctas}} {\text {Número total de predicciones}} \]</span></p>
+<div id="8c932a14" class="cell" data-outputid="004ed790-3587-4b33-e559-c525671c2487">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>accuracy <span class="op">=</span> accuracy_score(y_test, y_pred)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Accuracy:"</span>, accuracy)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="interpretación" class="level3">
+<h3 class="anchored" data-anchor-id="interpretación">Interpretación</h3>
+<section id="actividad-2.7" class="level4">
+<h4 class="anchored" data-anchor-id="actividad-2.7">Actividad 2.7:</h4>
+<p>Responde, ¿Qué se puede deducir de los resultados obtenidos?</p>
+</section>
+<section id="actividad-2.8" class="level4">
+<h4 class="anchored" data-anchor-id="actividad-2.8">Actividad 2.8:</h4>
+<p>Obtenga y compare los resultados obtenidos al utilizar validación cruzada. Además genere un gráfica (Boxplot) en la cual se evidencia la varianza de los resultados obtenidos mediante el k-fold de 5.</p>
+<div id="9dd52fde" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Metricas adicionales con Cross-validation </span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Boxplot de las variaciones de las métricas obtenidas en la validación cruzada</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="matriz-de-confusión" class="level3">
+<h3 class="anchored" data-anchor-id="matriz-de-confusión">Matriz de confusión</h3>
+<p>La matriz de confusión es una tabla utilizada para describir el rendimiento de un modelo de clasificación. Esta muestra el número de predicciones de verdaderos positivos (TP), verdaderos negativos (TN), falsos positivos (FP) y falsos negativos (FN).</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 36%">
+<col style="width: 31%">
+<col style="width: 31%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Predicho positivo</th>
+<th>Negativo previsto</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Positivo real</strong></td>
+<td>Verdadero positivo (TP)</td>
+<td>Falso Negativo (FN)</td>
+</tr>
+<tr class="even">
+<td><strong>Negativo real</strong></td>
+<td>Falso positivo (FP)</td>
+<td>Verdadero Negativo (TN)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>Verdadero positivo (TP): El modelo predijo correctamente una clase positiva.</p></li>
+<li><p>Verdadero Negativo (TN): El modelo predijo correctamente una clase negativa.</p></li>
+<li><p>Falso positivo (FP) (Error tipo I): El modelo predijo incorrectamente una clase positiva (una “falsa alarma”).</p></li>
+<li><p>Falso Negativo (FN) (Error tipo II): el modelo predijo incorrectamente una clase negativa (pasó por alto un caso positivo).</p></li>
+</ul>
+<section id="actividad-2.9" class="level4">
+<h4 class="anchored" data-anchor-id="actividad-2.9">Actividad 2.9:</h4>
+<p>Grafica la matriz de confusión y comenta los hallazgos.</p>
+<div id="1465a746" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Gráfica de la matriz de confusión</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="informe-de-clasificación" class="level3">
+<h3 class="anchored" data-anchor-id="informe-de-clasificación">Informe de clasificación</h3>
+<p>El informe de clasificación proporciona un desglose detallado del rendimiento del modelo, incluyendo <strong>Precisión</strong>, <strong>Recordar</strong> y <strong>Puntuación F1</strong> para cada clase.</p>
+<hr>
+<section id="métricas-clave-en-el-informe-de-clasificación" class="level4">
+<h4 class="anchored" data-anchor-id="métricas-clave-en-el-informe-de-clasificación">Métricas clave en el informe de clasificación</h4>
+<section id="precisión-valor-predictivo-positivo" class="level5">
+<h5 class="anchored" data-anchor-id="precisión-valor-predictivo-positivo">Precisión (Valor Predictivo Positivo)</h5>
+<ul>
+<li><strong>Definición:</strong> La proporción de predicciones positivas que realmente fueron correctas.<br>
+<span class="math display">\[\text {Precisión} = \frac{TP} {TP + FP}\]</span></li>
+<li><strong>Interpretación:</strong>
+<ul>
+<li>Alta precisión → pocos falsos positivos.<br>
+</li>
+<li>Útil cuando el costo de un falso positivo es alto (ejemplo: predecir una enfermedad cuando no está presente).</li>
+</ul></li>
+</ul>
+<hr>
+</section>
+<section id="recordatorio-sensibilidad-o-tasa-verdadera-positiva" class="level5">
+<h5 class="anchored" data-anchor-id="recordatorio-sensibilidad-o-tasa-verdadera-positiva">Recordatorio (Sensibilidad o Tasa Verdadera Positiva)</h5>
+<ul>
+<li><strong>Definición:</strong> La proporción de positivos reales que se predijeron correctamente.<br>
+<span class="math display">\[\text {Recall} = \frac{TP} {TP + FN}
+\]</span></li>
+<li><strong>Interpretación:</strong>
+<ul>
+<li>Alto recuerdo → pocos falsos negativos.<br>
+</li>
+<li>Útil cuando el costo de un falso negativo es alto (ejemplo: pasar por alto un diagnóstico de enfermedad).</li>
+</ul></li>
+</ul>
+<hr>
+</section>
+<section id="puntuación-f1" class="level5">
+<h5 class="anchored" data-anchor-id="puntuación-f1">Puntuación F1</h5>
+<ul>
+<li><strong>Definición:</strong> La media armónica de precisión y recuperación.<br>
+<span class="math display">\[\text{F1-Score} = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}\]</span></li>
+<li><strong>Interpretación:</strong>
+<ul>
+<li>Equilibra ambas métricas y es útil cuando necesitas una única puntuación de rendimiento.<br>
+</li>
+<li>Una puntuación F1 perfecta es <strong>1.0</strong>, lo que indica precisión y recuperación perfectas.</li>
+</ul></li>
+</ul>
+<div id="ff5fe272" class="cell" data-outputid="f0f5f93a-79b7-4f4d-833f-9e66b6148d29">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Classification Report:"</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(classification_report(y_test, y_pred))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="actividad-2.10" class="level4">
+<h4 class="anchored" data-anchor-id="actividad-2.10">Actividad 2.10:</h4>
+<p>Genera un resumen sobre los resultados obtenidos mediante el informe de clasificación.</p>
+<div id="cnNNqRMacmND" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Informe de clasificación</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+</section>
+</section>
+<section id="pregunta-final.-llamar-al-profesor-o-al-tutor" class="level1">
+<h1>PREGUNTA FINAL. (LLAMAR AL PROFESOR O AL TUTOR)</h1>
+<p>Se le consultara sobre alguna sección de su notebook, es importante que pueda defender y responder la pregunta del revisor. Solo de esta manera se considerará como terminada la actividad.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<script src="../../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

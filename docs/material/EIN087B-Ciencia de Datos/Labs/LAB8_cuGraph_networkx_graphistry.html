@@ -1,0 +1,2014 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Taller: Grafos en Ciencia de Datos – Material Docente</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-6d98dc22342cdec766e9ba27c206e023.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../../styles.scss">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Material Docente</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">Inicio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">Sobre mí</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul>
+  <li><a href="#conceptos-fundamentales-de-grafos" id="toc-conceptos-fundamentales-de-grafos" class="nav-link active" data-scroll-target="#conceptos-fundamentales-de-grafos">1. Conceptos fundamentales de grafos</a>
+  <ul class="collapse">
+  <li><a href="#tipos-de-grafos" id="toc-tipos-de-grafos" class="nav-link" data-scroll-target="#tipos-de-grafos">Tipos de grafos</a></li>
+  <li><a href="#conceptos-clave" id="toc-conceptos-clave" class="nav-link" data-scroll-target="#conceptos-clave">Conceptos clave</a></li>
+  </ul></li>
+  <li><a href="#herramientas-networkx-cugraph-y-graphistry" id="toc-herramientas-networkx-cugraph-y-graphistry" class="nav-link" data-scroll-target="#herramientas-networkx-cugraph-y-graphistry">2. Herramientas: NetworkX, cuGraph y Graphistry</a>
+  <ul class="collapse">
+  <li><a href="#networkx" id="toc-networkx" class="nav-link" data-scroll-target="#networkx">NetworkX</a></li>
+  <li><a href="#cugraph" id="toc-cugraph" class="nav-link" data-scroll-target="#cugraph">cuGraph</a></li>
+  <li><a href="#graphistry" id="toc-graphistry" class="nav-link" data-scroll-target="#graphistry">Graphistry</a></li>
+  </ul></li>
+  <li><a href="#dataset-red-de-carreteras-de-gran-bretaña" id="toc-dataset-red-de-carreteras-de-gran-bretaña" class="nav-link" data-scroll-target="#dataset-red-de-carreteras-de-gran-bretaña">3. Dataset: red de carreteras de Gran Bretaña</a>
+  <ul class="collapse">
+  <li><a href="#configuración-de-entorno" id="toc-configuración-de-entorno" class="nav-link" data-scroll-target="#configuración-de-entorno">Configuración de entorno</a></li>
+  <li><a href="#conjunto-de-datos" id="toc-conjunto-de-datos" class="nav-link" data-scroll-target="#conjunto-de-datos">Conjunto de datos</a></li>
+  </ul></li>
+  <li><a href="#construcción-del-grafo" id="toc-construcción-del-grafo" class="nav-link" data-scroll-target="#construcción-del-grafo">4. Construcción del grafo</a>
+  <ul class="collapse">
+  <li><a href="#comparación-con-networkx-en-cpu" id="toc-comparación-con-networkx-en-cpu" class="nav-link" data-scroll-target="#comparación-con-networkx-en-cpu">Comparación con NetworkX en CPU</a></li>
+  </ul></li>
+  <li><a href="#análisis-estructural-de-la-red" id="toc-análisis-estructural-de-la-red" class="nav-link" data-scroll-target="#análisis-estructural-de-la-red">5. Análisis estructural de la red</a>
+  <ul class="collapse">
+  <li><a href="#distribución-de-grados" id="toc-distribución-de-grados" class="nav-link" data-scroll-target="#distribución-de-grados">Distribución de grados</a></li>
+  <li><a href="#nodos-más-conectados" id="toc-nodos-más-conectados" class="nav-link" data-scroll-target="#nodos-más-conectados">Nodos más conectados</a></li>
+  <li><a href="#loops-en-la-red" id="toc-loops-en-la-red" class="nav-link" data-scroll-target="#loops-en-la-red">Loops en la red</a></li>
+  <li><a href="#centralidad-de-intermediación-sobre-la-muestra" id="toc-centralidad-de-intermediación-sobre-la-muestra" class="nav-link" data-scroll-target="#centralidad-de-intermediación-sobre-la-muestra">Centralidad de intermediación sobre la muestra</a></li>
+  </ul></li>
+  <li><a href="#camino-mínimo-desde-un-solo-origen-sssp" id="toc-camino-mínimo-desde-un-solo-origen-sssp" class="nav-link" data-scroll-target="#camino-mínimo-desde-un-solo-origen-sssp">6. Camino mínimo desde un solo origen (SSSP)</a>
+  <ul class="collapse">
+  <li><a href="#construcción-del-grafo-de-tiempos" id="toc-construcción-del-grafo-de-tiempos" class="nav-link" data-scroll-target="#construcción-del-grafo-de-tiempos">Construcción del grafo de tiempos</a></li>
+  <li><a href="#selección-del-nodo-de-partida" id="toc-selección-del-nodo-de-partida" class="nav-link" data-scroll-target="#selección-del-nodo-de-partida">Selección del nodo de partida</a></li>
+  <li><a href="#sssp-con-pesos-de-distancia" id="toc-sssp-con-pesos-de-distancia" class="nav-link" data-scroll-target="#sssp-con-pesos-de-distancia">SSSP con pesos de distancia</a></li>
+  <li><a href="#tratamiento-de-nodos-inalcanzables" id="toc-tratamiento-de-nodos-inalcanzables" class="nav-link" data-scroll-target="#tratamiento-de-nodos-inalcanzables">Tratamiento de nodos inalcanzables</a></li>
+  <li><a href="#sssp-con-pesos-de-tiempo" id="toc-sssp-con-pesos-de-tiempo" class="nav-link" data-scroll-target="#sssp-con-pesos-de-tiempo">SSSP con pesos de tiempo</a></li>
+  <li><a href="#preparación-de-los-resultados-para-visualización" id="toc-preparación-de-los-resultados-para-visualización" class="nav-link" data-scroll-target="#preparación-de-los-resultados-para-visualización">Preparación de los resultados para visualización</a></li>
+  </ul></li>
+  <li><a href="#visualización-interactiva" id="toc-visualización-interactiva" class="nav-link" data-scroll-target="#visualización-interactiva">7. Visualización interactiva</a>
+  <ul class="collapse">
+  <li><a href="#configuración-de-graphistry" id="toc-configuración-de-graphistry" class="nav-link" data-scroll-target="#configuración-de-graphistry">Configuración de Graphistry</a></li>
+  <li><a href="#visualización-de-nodos-por-tiempo-de-viaje" id="toc-visualización-de-nodos-por-tiempo-de-viaje" class="nav-link" data-scroll-target="#visualización-de-nodos-por-tiempo-de-viaje">Visualización de nodos por tiempo de viaje</a></li>
+  <li><a href="#construcción-del-árbol-de-caminos-mínimos" id="toc-construcción-del-árbol-de-caminos-mínimos" class="nav-link" data-scroll-target="#construcción-del-árbol-de-caminos-mínimos">Construcción del Árbol de Caminos Mínimos</a></li>
+  </ul></li>
+  <li><a href="#actividad" id="toc-actividad" class="nav-link" data-scroll-target="#actividad">8. Actividad</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Taller: Grafos en Ciencia de Datos</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<blockquote class="blockquote">
+<p><em>Dada una red de carreteras real, ¿desde qué punto conviene partir si quiero llegar lo más rápido posible a todos los demás lugares de la red?</em></p>
+</blockquote>
+<p>Esa pregunta aparentemente simple nos permitirá recorrer los conceptos fundamentales de la teoría de grafos, a construir un grafo a partir de tablas de datos reales, a calculardistancias mínimas sobre miles de nodos, y a visualizar el resultado de forma que cualquier persona pueda explorarlo interactivamente.</p>
+<p>Los datos son una red de carreteras de Gran Bretaña: cientos de miles de nodos (intersecciones) conectados por aristas (tramos de carretera) con pesos que representan distancia o tiempo de viaje.</p>
+<section id="conceptos-fundamentales-de-grafos" class="level2">
+<h2 class="anchored" data-anchor-id="conceptos-fundamentales-de-grafos">1. Conceptos fundamentales de grafos</h2>
+<p>Un grafo es una estructura matemática que modela relaciones entre objetos.</p>
+<p>Formalmente, un grafo <span class="math inline">\(G\)</span> se define como un par <span class="math inline">\(G = (V, E)\)</span>, donde:</p>
+<ul>
+<li><span class="math inline">\(V\)</span> es un conjunto de <strong>nodos</strong> (o vértices): los objetos que queremos modelar.</li>
+<li><span class="math inline">\(E\)</span> es un conjunto de <strong>aristas</strong> (o edges): las relaciones entre pares de nodos.</li>
+</ul>
+<section id="tipos-de-grafos" class="level3">
+<h3 class="anchored" data-anchor-id="tipos-de-grafos">Tipos de grafos</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 48%">
+<col style="width: 29%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tipo</th>
+<th>Descripción</th>
+<th>Ejemplo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>No dirigido</strong></td>
+<td>Las aristas no tienen dirección; la relación es simétrica</td>
+<td>Red de amistades</td>
+</tr>
+<tr class="even">
+<td><strong>Dirigido</strong> (dígrafo)</td>
+<td>Las aristas tienen dirección: <span class="math inline">\((u, v) \neq (v, u)\)</span></td>
+<td>Twitter (seguir)</td>
+</tr>
+<tr class="odd">
+<td><strong>Ponderado</strong></td>
+<td>Cada arista tiene un peso numérico asociado</td>
+<td>Carreteras (distancia, tiempo)</td>
+</tr>
+<tr class="even">
+<td><strong>No ponderado</strong></td>
+<td>Todas las aristas valen igual</td>
+<td>Hiperenlaces web</td>
+</tr>
+</tbody>
+</table>
+<p>En este taller trabajamos con un grafo no dirigido y ponderado: las carreteras pueden recorrerse en ambos sentidos, y cada tramo tiene un peso (longitud o tiempo de viaje).</p>
+</section>
+<section id="conceptos-clave" class="level3">
+<h3 class="anchored" data-anchor-id="conceptos-clave">Conceptos clave</h3>
+<p><strong>Grado de un nodo (<em>degree</em>):</strong> El número de aristas que inciden en un nodo. En un grafo no dirigido, indica cuántos vecinos directos tiene ese nodo. Un nodo con grado alto es una intersección muy conectada; con grado 1 es un callejón sin salida.</p>
+<p><strong>Camino (<em>path</em>):</strong> Una secuencia de nodos <span class="math inline">\(v_1, v_2, \ldots, v_k\)</span> tal que existe una arista entre cada par consecutivo. La longitud del camino es la suma de los pesos de sus aristas (en grafos ponderados) o simplemente el número de aristas (en no ponderados).</p>
+<p><strong>Camino mínimo (<em>shortest path</em>):</strong> El camino de menor coste total entre dos nodos. En una red de carreteras, puede significar la ruta más corta en kilómetros o la más rápida en tiempo.</p>
+<p><strong>Distancia entre dos nodos:</strong> La longitud del camino mínimo entre ellos. Si no hay camino (el grafo no es conexo), la distancia es infinita.</p>
+<p><strong>Componente conexa:</strong> Un subconjunto de nodos tal que existe un camino entre cualquier par. Una red de carreteras puede tener nodos aislados (islas sin conexión terrestre), que forman componentes separadas.</p>
+<p><strong>Centralidad (<em>centrality</em>)</strong> Familia de métricas que cuantifican la importancia de un nodo dentro de la red. Algunas de las más usadas son la centralidad de grado para nodos con más conexiones directas, centralidad de intermediación para nodos que aparecen en muchos caminos mínimos y cuya eliminación desconectaría la red, y PageRank para nodos que son importantes porque sus vecinos también lo son.</p>
+</section>
+</section>
+<section id="herramientas-networkx-cugraph-y-graphistry" class="level2">
+<h2 class="anchored" data-anchor-id="herramientas-networkx-cugraph-y-graphistry">2. Herramientas: NetworkX, cuGraph y Graphistry</h2>
+<section id="networkx" class="level3">
+<h3 class="anchored" data-anchor-id="networkx">NetworkX</h3>
+<p><a href="https://networkx.org/">NetworkX</a> es la librería de referencia para grafos en Python. Permite crear, manipular y analizar grafos con una API intuitiva, e incluye implementaciones de cientos de algoritmos. Es ideal para prototipado, enseñanza y redes de tamaño moderado (cientos de miles de nodos). Sin embargo, corre íntegramente en CPU con un solo hilo. En redes muy grandes (millones de nodos/aristas), ciertos algoritmos pueden tardar minutos o incluso horas.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> nx.Graph()                      <span class="co"># grafo no dirigido</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>G.add_edge(<span class="st">'A'</span>, <span class="st">'B'</span>, weight<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>nx.shortest_path(G, <span class="st">'A'</span>, <span class="st">'B'</span>, weight<span class="op">=</span><span class="st">'weight'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="cugraph" class="level3">
+<h3 class="anchored" data-anchor-id="cugraph">cuGraph</h3>
+<p><a href="https://github.com/rapidsai/cugraph">cuGraph</a> es el equivalente GPU de NetworkX, parte del ecosistema RAPIDS. Así como cuDF acelera pandas moviéndola a GPU, cuGraph permite ejecutar los mismos algoritmos de grafos con aceleraciones de 10× a 100× en grafos grandes.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cugraph <span class="im">as</span> cg</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cudf</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>edges <span class="op">=</span> cudf.read_csv(<span class="st">'road_graph.csv'</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> cg.Graph()</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>G.from_cudf_edgelist(edges, source<span class="op">=</span><span class="st">'src'</span>, destination<span class="op">=</span><span class="st">'dst'</span>, edge_attr<span class="op">=</span><span class="st">'length'</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>resultado <span class="op">=</span> cg.sssp(G, source<span class="op">=</span><span class="dv">0</span>)    <span class="co"># Single Source Shortest Path en GPU</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="graphistry" class="level3">
+<h3 class="anchored" data-anchor-id="graphistry">Graphistry</h3>
+<p><a href="https://www.graphistry.com/">Graphistry</a> es una plataforma de visualización interactiva de grafos e hipergrafos. A diferencia de las visualizaciones estáticas de NetworkX (basadas en matplotlib), Graphistry renderiza el grafo en el navegador con aceleración GPU, permitiendo explorar redes de millones de nodos con zoom, filtros y selección interactiva. El resultado es un widget embebible en el notebook con el que el usuario puede rotar, hacer zoom y seleccionar nodos de interés.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> graphistry</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>graphistry.register(api<span class="op">=</span><span class="dv">3</span>, username<span class="op">=</span><span class="st">'...'</span>, password<span class="op">=</span><span class="st">'...'</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>graphistry<span class="op">\</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    .edges(edges_df, <span class="st">'src'</span>, <span class="st">'dst'</span>)<span class="op">\</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    .nodes(nodes_df, <span class="st">'node_id'</span>)<span class="op">\</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    .plot()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="dataset-red-de-carreteras-de-gran-bretaña" class="level2">
+<h2 class="anchored" data-anchor-id="dataset-red-de-carreteras-de-gran-bretaña">3. Dataset: red de carreteras de Gran Bretaña</h2>
+<p>Trabajamos con cuatro archivos CSV que juntos describen la red completa de carreteras de Gran Bretaña:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 28%">
+<col style="width: 31%">
+<col style="width: 40%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Archivo</th>
+<th>Columnas</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>road_nodes.csv</code></td>
+<td><code>node_id</code>, <code>east</code>, <code>north</code>, <code>type</code></td>
+<td>Coordenadas geográficas de cada intersección</td>
+</tr>
+<tr class="even">
+<td><code>road_graph.csv</code></td>
+<td><code>src</code>, <code>dst</code>, <code>length</code></td>
+<td>Aristas con peso = longitud en metros</td>
+</tr>
+<tr class="odd">
+<td><code>road_graph_speed.csv</code></td>
+<td><code>src</code>, <code>dst</code>, <code>length_s</code></td>
+<td>Aristas con peso = tiempo de viaje en segundos</td>
+</tr>
+<tr class="even">
+<td><code>node_graph_map.csv</code></td>
+<td><code>node_id</code>, <code>graph_id</code></td>
+<td>Mapeo entre IDs originales e IDs enteros del grafo</td>
+</tr>
+</tbody>
+</table>
+<p>Los archivos <code>road_graph</code> y <code>road_graph_speed</code> ya usan <code>graph_id</code> (enteros eficientes) en vez del <code>node_id</code> original (cadenas largas). El archivo <code>node_graph_map</code> permite traducir entre ambos cuando sea necesario.</p>
+<p>La red contiene cientos de miles de nodos (intersecciones) y millones de aristas (tramos de carretera). Es una red real, con toda su complejidad: islas sin conexión terrestre, carreteras de un solo sentido representadas como pares de aristas, y loops donde una carretera vuelve al mismo nodo.</p>
+<section id="configuración-de-entorno" class="level3">
+<h3 class="anchored" data-anchor-id="configuración-de-entorno">Configuración de entorno</h3>
+<div id="Lzo7Vt8WRuvF" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="3b62546e-e5ca-4686-abe1-11f704b8c4f5" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Instalar cuda-python (componente esencial para interop CUDA)</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install cuda<span class="op">-</span>python</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Determinar la versión de CUDA en Colab para instalar los paquetes correctos</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>cuda_major_version <span class="op">=</span> <span class="op">!</span>nvcc <span class="op">--</span>version <span class="op">|</span> grep <span class="op">-</span>oP <span class="st">'release </span><span class="er">\</span><span class="st">K</span><span class="er">\</span><span class="st">d+'</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>cuda_version_suffix <span class="op">=</span> <span class="ss">f"cu</span><span class="sc">{</span>cuda_major_version[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">"</span> <span class="cf">if</span> cuda_major_version <span class="cf">else</span> <span class="st">"cu12"</span> <span class="co"># Default to cu12 if detection fails</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Instalando RAPIDS para CUDA </span><span class="sc">{</span>cuda_version_suffix<span class="sc">.</span>replace(<span class="st">'cu'</span>,<span class="st">''</span>)<span class="sc">}</span><span class="ss">.x..."</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install cudf<span class="op">-</span>{cuda_version_suffix} cugraph<span class="op">-</span>{cuda_version_suffix} <span class="op">--</span>extra<span class="op">-</span>index<span class="op">-</span>url<span class="op">=</span>https:<span class="op">//</span>pypi.nvidia.com</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>python_version_path <span class="op">=</span> <span class="ss">f"/usr/local/lib/python</span><span class="sc">{</span>sys<span class="sc">.</span>version_info<span class="sc">.</span>major<span class="sc">}</span><span class="ss">.</span><span class="sc">{</span>sys<span class="sc">.</span>version_info<span class="sc">.</span>minor<span class="sc">}</span><span class="ss">/dist-packages"</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> python_version_path <span class="kw">not</span> <span class="kw">in</span> sys.path:</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    sys.path.insert(<span class="dv">0</span>, python_version_path)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"RAPIDS components (cuDF, cuGraph) installed."</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="ansi-escaped-output">
+<pre>Requirement already satisfied: cuda-python in /usr/local/lib/python3.12/dist-packages (12.9.7)
+
+Requirement already satisfied: cuda-bindings~=12.9.7 in /usr/local/lib/python3.12/dist-packages (from cuda-python) (12.9.7)
+
+Requirement already satisfied: cuda-pathfinder~=1.1 in /usr/local/lib/python3.12/dist-packages (from cuda-bindings~=12.9.7-&gt;cuda-python) (1.5.5)
+
+Instalando RAPIDS para CUDA 12.x...
+
+Looking in indexes: https://pypi.org/simple, https://pypi.nvidia.com
+
+Requirement already satisfied: cudf-cu12 in /usr/local/lib/python3.12/dist-packages (26.2.1)
+
+Collecting cugraph-cu12
+
+  Downloading https://pypi.nvidia.com/cugraph-cu12/cugraph_cu12-26.6.0-cp311-abi3-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (2.0 MB)
+
+     <span class="ansi-bright-black-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">2.0/2.0 MB</span> <span class="ansi-red-fg">30.4 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+
+Requirement already satisfied: cachetools in /usr/local/lib/python3.12/dist-packages (from cudf-cu12) (6.2.6)
+
+Requirement already satisfied: cuda-python&lt;13.0,&gt;=12.9.2 in /usr/local/lib/python3.12/dist-packages (from cudf-cu12) (12.9.7)
+
+Requirement already satisfied: cuda-toolkit==12.* in /usr/local/lib/python3.12/dist-packages (from cuda-toolkit[nvcc,nvrtc]==12.*-&gt;cudf-cu12) (12.8.1)
+
+Requirement already satisfied: cupy-cuda12x&gt;=13.6.0 in /usr/local/lib/python3.12/dist-packages (from cudf-cu12) (14.0.1)
+
+Requirement already satisfied: fsspec&gt;=0.6.0 in /usr/local/lib/python3.12/dist-packages (from cudf-cu12) (2025.3.0)
+
+Requirement already satisfied: libcudf-cu12==26.2.* in /usr/local/lib/python3.12/dist-packages (from cudf-cu12) (26.2.1)
+
+Requirement already satisfied: numba-cuda&lt;0.23.0,&gt;=0.22.2 in /usr/local/lib/python3.12/dist-packages (from numba-cuda[cu12]&lt;0.23.0,&gt;=0.22.2-&gt;cudf-cu12) (0.22.2)
+
+Requirement already satisfied: numba&lt;0.62.0,&gt;=0.60.0 in /usr/local/lib/python3.12/dist-packages (from cudf-cu12) (0.60.0)
+
+Requirement already satisfied: numpy&lt;3.0,&gt;=1.23 in /usr/local/lib/python3.12/dist-packages (from cudf-cu12) (2.0.2)
+
+Requirement already satisfied: nvtx&gt;=0.2.1 in /usr/local/lib/python3.12/dist-packages (from cudf-cu12) (0.2.15)
+
+Requirement already satisfied: packaging in /usr/local/lib/python3.12/dist-packages (from cudf-cu12) (26.2)
+
+Requirement already satisfied: pandas&lt;2.4.0,&gt;=2.0 in /usr/local/lib/python3.12/dist-packages (from cudf-cu12) (2.2.2)
+
+Requirement already satisfied: pyarrow&gt;=15.0.0 in /usr/local/lib/python3.12/dist-packages (from cudf-cu12) (18.1.0)
+
+Requirement already satisfied: pylibcudf-cu12==26.2.* in /usr/local/lib/python3.12/dist-packages (from cudf-cu12) (26.2.1)
+
+Requirement already satisfied: rich in /usr/local/lib/python3.12/dist-packages (from cudf-cu12) (13.9.4)
+
+Requirement already satisfied: rmm-cu12==26.2.* in /usr/local/lib/python3.12/dist-packages (from cudf-cu12) (26.2.0)
+
+Requirement already satisfied: typing_extensions&gt;=4.0.0 in /usr/local/lib/python3.12/dist-packages (from cudf-cu12) (4.15.0)
+
+Requirement already satisfied: nvidia-cuda-nvcc-cu12==12.8.93.* in /usr/local/lib/python3.12/dist-packages (from cuda-toolkit[nvcc,nvrtc]==12.*-&gt;cudf-cu12) (12.8.93)
+
+Requirement already satisfied: nvidia-cuda-nvrtc-cu12==12.8.93.* in /usr/local/lib/python3.12/dist-packages (from cuda-toolkit[nvcc,nvrtc]==12.*-&gt;cudf-cu12) (12.8.93)
+
+Requirement already satisfied: libkvikio-cu12==26.2.* in /usr/local/lib/python3.12/dist-packages (from libcudf-cu12==26.2.*-&gt;cudf-cu12) (26.2.0)
+
+Requirement already satisfied: librmm-cu12==26.2.* in /usr/local/lib/python3.12/dist-packages (from libcudf-cu12==26.2.*-&gt;cudf-cu12) (26.2.0)
+
+Requirement already satisfied: nvidia-libnvcomp-cu12==5.1.0.21 in /usr/local/lib/python3.12/dist-packages (from libcudf-cu12==26.2.*-&gt;cudf-cu12) (5.1.0.21)
+
+Requirement already satisfied: rapids-logger==0.2.* in /usr/local/lib/python3.12/dist-packages (from libcudf-cu12==26.2.*-&gt;cudf-cu12) (0.2.3)
+
+Collecting cudf-cu12
+
+  Downloading https://pypi.nvidia.com/cudf-cu12/cudf_cu12-26.6.0-cp311-abi3-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (2.7 MB)
+
+     <span class="ansi-bright-black-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">2.7/2.7 MB</span> <span class="ansi-red-fg">50.0 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+
+Collecting dask-cuda==26.6.* (from cugraph-cu12)
+
+  Downloading https://pypi.nvidia.com/dask-cuda/dask_cuda-26.6.0-py3-none-manylinux_2_28_aarch64.manylinux_2_28_x86_64.whl (113 kB)
+
+     <span class="ansi-bright-black-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">113.5/113.5 kB</span> <span class="ansi-red-fg">33.2 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+
+Collecting dask-cudf-cu12==26.6.* (from cugraph-cu12)
+
+  Downloading https://pypi.nvidia.com/dask-cudf-cu12/dask_cudf_cu12-26.6.0-py3-none-any.whl (51 kB)
+
+     <span class="ansi-bright-black-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">51.1/51.1 kB</span> <span class="ansi-red-fg">59.1 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+
+Collecting libcugraph-cu12==26.6.* (from cugraph-cu12)
+
+  Downloading https://pypi.nvidia.com/libcugraph-cu12/libcugraph_cu12-26.6.0-py3-none-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (1343.1 MB)
+
+     <span class="ansi-bright-black-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">1.3/1.3 GB</span> <span class="ansi-red-fg">28.7 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+
+INFO: pip is looking at multiple versions of cugraph-cu12 to determine which version is compatible with other requirements. This could take a while.
+
+Collecting cugraph-cu12
+
+  Downloading https://pypi.nvidia.com/cugraph-cu12/cugraph_cu12-26.4.0-cp311-abi3-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (2.0 MB)
+
+     <span class="ansi-bright-black-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">2.0/2.0 MB</span> <span class="ansi-red-fg">234.8 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+
+Collecting cudf-cu12
+
+  Downloading https://pypi.nvidia.com/cudf-cu12/cudf_cu12-26.4.0-cp311-abi3-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (2.7 MB)
+
+     <span class="ansi-bright-black-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">2.7/2.7 MB</span> <span class="ansi-red-fg">246.5 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+
+Collecting dask-cuda==26.4.* (from cugraph-cu12)
+
+  Downloading https://pypi.nvidia.com/dask-cuda/dask_cuda-26.4.0-py3-none-manylinux_2_28_aarch64.manylinux_2_28_x86_64.whl (163 kB)
+
+     <span class="ansi-bright-black-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">163.3/163.3 kB</span> <span class="ansi-red-fg">152.4 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+
+Collecting dask-cudf-cu12==26.4.* (from cugraph-cu12)
+
+  Downloading https://pypi.nvidia.com/dask-cudf-cu12/dask_cudf_cu12-26.4.0-py3-none-any.whl (51 kB)
+
+     <span class="ansi-bright-black-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">51.1/51.1 kB</span> <span class="ansi-red-fg">70.3 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+
+Collecting libcugraph-cu12==26.4.* (from cugraph-cu12)
+
+  Downloading https://pypi.nvidia.com/libcugraph-cu12/libcugraph_cu12-26.4.0-py3-none-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (1690.1 MB)
+
+     <span class="ansi-bright-black-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">1.7/1.7 GB</span> <span class="ansi-red-fg">30.4 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+
+Collecting cugraph-cu12
+
+  Downloading https://pypi.nvidia.com/cugraph-cu12/cugraph_cu12-26.2.0-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (1.9 MB)
+
+     <span class="ansi-bright-black-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">1.9/1.9 MB</span> <span class="ansi-red-fg">246.7 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+
+Requirement already satisfied: dask-cuda==26.2.* in /usr/local/lib/python3.12/dist-packages (from cugraph-cu12) (26.2.0)
+
+Requirement already satisfied: dask-cudf-cu12==26.2.* in /usr/local/lib/python3.12/dist-packages (from cugraph-cu12) (26.2.1)
+
+Requirement already satisfied: libcugraph-cu12==26.2.* in /usr/local/lib/python3.12/dist-packages (from cugraph-cu12) (26.2.0)
+
+Requirement already satisfied: pylibcugraph-cu12==26.2.* in /usr/local/lib/python3.12/dist-packages (from cugraph-cu12) (26.2.0)
+
+Requirement already satisfied: pylibraft-cu12==26.2.* in /usr/local/lib/python3.12/dist-packages (from cugraph-cu12) (26.2.0)
+
+Requirement already satisfied: raft-dask-cu12==26.2.* in /usr/local/lib/python3.12/dist-packages (from cugraph-cu12) (26.2.0)
+
+Requirement already satisfied: rapids-dask-dependency==26.2.* in /usr/local/lib/python3.12/dist-packages (from cugraph-cu12) (26.2.0)
+
+Requirement already satisfied: ucxx-cu12==0.48.* in /usr/local/lib/python3.12/dist-packages (from cugraph-cu12) (0.48.0)
+
+Requirement already satisfied: click&gt;=8.1 in /usr/local/lib/python3.12/dist-packages (from dask-cuda==26.2.*-&gt;cugraph-cu12) (8.4.1)
+
+Requirement already satisfied: cuda-core==0.3.* in /usr/local/lib/python3.12/dist-packages (from dask-cuda==26.2.*-&gt;cugraph-cu12) (0.3.2)
+
+Requirement already satisfied: nvidia-ml-py&gt;=12 in /usr/local/lib/python3.12/dist-packages (from dask-cuda==26.2.*-&gt;cugraph-cu12) (13.610.43)
+
+Requirement already satisfied: zict&gt;=2.0.0 in /usr/local/lib/python3.12/dist-packages (from dask-cuda==26.2.*-&gt;cugraph-cu12) (3.0.0)
+
+Requirement already satisfied: libraft-cu12==26.2.* in /usr/local/lib/python3.12/dist-packages (from libcugraph-cu12==26.2.*-&gt;cugraph-cu12) (26.2.0)
+
+Requirement already satisfied: distributed-ucxx-cu12==0.48.* in /usr/local/lib/python3.12/dist-packages (from raft-dask-cu12==26.2.*-&gt;cugraph-cu12) (0.48.0)
+
+Requirement already satisfied: nvidia-nccl-cu12&gt;=2.19 in /usr/local/lib/python3.12/dist-packages (from raft-dask-cu12==26.2.*-&gt;cugraph-cu12) (2.28.9)
+
+Requirement already satisfied: dask==2026.1.1 in /usr/local/lib/python3.12/dist-packages (from rapids-dask-dependency==26.2.*-&gt;cugraph-cu12) (2026.1.1)
+
+Requirement already satisfied: distributed==2026.1.1 in /usr/local/lib/python3.12/dist-packages (from rapids-dask-dependency==26.2.*-&gt;cugraph-cu12) (2026.1.1)
+
+Requirement already satisfied: libucxx-cu12==0.48.* in /usr/local/lib/python3.12/dist-packages (from ucxx-cu12==0.48.*-&gt;cugraph-cu12) (0.48.0)
+
+Requirement already satisfied: cloudpickle&gt;=3.0.0 in /usr/local/lib/python3.12/dist-packages (from dask==2026.1.1-&gt;rapids-dask-dependency==26.2.*-&gt;cugraph-cu12) (3.1.2)
+
+Requirement already satisfied: partd&gt;=1.4.0 in /usr/local/lib/python3.12/dist-packages (from dask==2026.1.1-&gt;rapids-dask-dependency==26.2.*-&gt;cugraph-cu12) (1.4.2)
+
+Requirement already satisfied: pyyaml&gt;=5.3.1 in /usr/local/lib/python3.12/dist-packages (from dask==2026.1.1-&gt;rapids-dask-dependency==26.2.*-&gt;cugraph-cu12) (6.0.3)
+
+Requirement already satisfied: toolz&gt;=0.12.0 in /usr/local/lib/python3.12/dist-packages (from dask==2026.1.1-&gt;rapids-dask-dependency==26.2.*-&gt;cugraph-cu12) (0.12.1)
+
+Requirement already satisfied: jinja2&gt;=2.10.3 in /usr/local/lib/python3.12/dist-packages (from distributed==2026.1.1-&gt;rapids-dask-dependency==26.2.*-&gt;cugraph-cu12) (3.1.6)
+
+Requirement already satisfied: locket&gt;=1.0.0 in /usr/local/lib/python3.12/dist-packages (from distributed==2026.1.1-&gt;rapids-dask-dependency==26.2.*-&gt;cugraph-cu12) (1.0.0)
+
+Requirement already satisfied: msgpack&gt;=1.0.2 in /usr/local/lib/python3.12/dist-packages (from distributed==2026.1.1-&gt;rapids-dask-dependency==26.2.*-&gt;cugraph-cu12) (1.1.2)
+
+Requirement already satisfied: psutil&gt;=5.8.0 in /usr/local/lib/python3.12/dist-packages (from distributed==2026.1.1-&gt;rapids-dask-dependency==26.2.*-&gt;cugraph-cu12) (5.9.5)
+
+Requirement already satisfied: sortedcontainers&gt;=2.0.5 in /usr/local/lib/python3.12/dist-packages (from distributed==2026.1.1-&gt;rapids-dask-dependency==26.2.*-&gt;cugraph-cu12) (2.4.0)
+
+Requirement already satisfied: tblib!=3.2.0,!=3.2.1,&gt;=1.6.0 in /usr/local/lib/python3.12/dist-packages (from distributed==2026.1.1-&gt;rapids-dask-dependency==26.2.*-&gt;cugraph-cu12) (3.2.2)
+
+Requirement already satisfied: tornado&gt;=6.2.0 in /usr/local/lib/python3.12/dist-packages (from distributed==2026.1.1-&gt;rapids-dask-dependency==26.2.*-&gt;cugraph-cu12) (6.5.1)
+
+Requirement already satisfied: urllib3&gt;=1.26.5 in /usr/local/lib/python3.12/dist-packages (from distributed==2026.1.1-&gt;rapids-dask-dependency==26.2.*-&gt;cugraph-cu12) (2.5.0)
+
+Requirement already satisfied: libucx-cu12&lt;1.20,&gt;=1.18.0 in /usr/local/lib/python3.12/dist-packages (from libucxx-cu12==0.48.*-&gt;ucxx-cu12==0.48.*-&gt;cugraph-cu12) (1.19.0)
+
+Requirement already satisfied: nvidia-cublas-cu12==12.8.4.1.* in /usr/local/lib/python3.12/dist-packages (from cuda-toolkit==12.*-&gt;cuda-toolkit[nvcc,nvrtc]==12.*-&gt;cudf-cu12) (12.8.4.1)
+
+Requirement already satisfied: nvidia-curand-cu12==10.3.9.90.* in /usr/local/lib/python3.12/dist-packages (from cuda-toolkit==12.*-&gt;cuda-toolkit[nvcc,nvrtc]==12.*-&gt;cudf-cu12) (10.3.9.90)
+
+Requirement already satisfied: nvidia-cusolver-cu12==11.7.3.90.* in /usr/local/lib/python3.12/dist-packages (from cuda-toolkit==12.*-&gt;cuda-toolkit[nvcc,nvrtc]==12.*-&gt;cudf-cu12) (11.7.3.90)
+
+Requirement already satisfied: nvidia-cusparse-cu12==12.5.8.93.* in /usr/local/lib/python3.12/dist-packages (from cuda-toolkit==12.*-&gt;cuda-toolkit[nvcc,nvrtc]==12.*-&gt;cudf-cu12) (12.5.8.93)
+
+Requirement already satisfied: nvidia-nvjitlink-cu12 in /usr/local/lib/python3.12/dist-packages (from nvidia-cusolver-cu12==11.7.3.90.*-&gt;cuda-toolkit==12.*-&gt;cuda-toolkit[nvcc,nvrtc]==12.*-&gt;cudf-cu12) (12.8.93)
+
+Requirement already satisfied: cuda-bindings~=12.9.7 in /usr/local/lib/python3.12/dist-packages (from cuda-python&lt;13.0,&gt;=12.9.2-&gt;cudf-cu12) (12.9.7)
+
+Requirement already satisfied: cuda-pathfinder==1.*,&gt;=1.3.3 in /usr/local/lib/python3.12/dist-packages (from cupy-cuda12x&gt;=13.6.0-&gt;cudf-cu12) (1.5.5)
+
+Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /usr/local/lib/python3.12/dist-packages (from fsspec[http]&gt;=0.6.0-&gt;cugraph-cu12) (3.14.0)
+
+Requirement already satisfied: llvmlite&lt;0.44,&gt;=0.43.0dev0 in /usr/local/lib/python3.12/dist-packages (from numba&lt;0.62.0,&gt;=0.60.0-&gt;cudf-cu12) (0.43.0)
+
+Requirement already satisfied: nvidia-cuda-runtime-cu12 in /usr/local/lib/python3.12/dist-packages (from numba-cuda[cu12]&lt;0.23.0,&gt;=0.22.2-&gt;cudf-cu12) (12.8.90)
+
+Requirement already satisfied: nvidia-cuda-cccl-cu12 in /usr/local/lib/python3.12/dist-packages (from numba-cuda[cu12]&lt;0.23.0,&gt;=0.22.2-&gt;cudf-cu12) (12.9.27)
+
+Requirement already satisfied: python-dateutil&gt;=2.8.2 in /usr/local/lib/python3.12/dist-packages (from pandas&lt;2.4.0,&gt;=2.0-&gt;cudf-cu12) (2.9.0.post0)
+
+Requirement already satisfied: pytz&gt;=2020.1 in /usr/local/lib/python3.12/dist-packages (from pandas&lt;2.4.0,&gt;=2.0-&gt;cudf-cu12) (2025.2)
+
+Requirement already satisfied: tzdata&gt;=2022.7 in /usr/local/lib/python3.12/dist-packages (from pandas&lt;2.4.0,&gt;=2.0-&gt;cudf-cu12) (2026.2)
+
+Requirement already satisfied: markdown-it-py&gt;=2.2.0 in /usr/local/lib/python3.12/dist-packages (from rich-&gt;cudf-cu12) (4.2.0)
+
+Requirement already satisfied: pygments&lt;3.0.0,&gt;=2.13.0 in /usr/local/lib/python3.12/dist-packages (from rich-&gt;cudf-cu12) (2.20.0)
+
+Requirement already satisfied: aiohappyeyeballs&gt;=2.5.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=0.6.0-&gt;cugraph-cu12) (2.6.2)
+
+Requirement already satisfied: aiosignal&gt;=1.4.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=0.6.0-&gt;cugraph-cu12) (1.4.0)
+
+Requirement already satisfied: attrs&gt;=17.3.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=0.6.0-&gt;cugraph-cu12) (26.1.0)
+
+Requirement already satisfied: frozenlist&gt;=1.1.1 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=0.6.0-&gt;cugraph-cu12) (1.8.0)
+
+Requirement already satisfied: multidict&lt;7.0,&gt;=4.5 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=0.6.0-&gt;cugraph-cu12) (6.7.1)
+
+Requirement already satisfied: propcache&gt;=0.2.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=0.6.0-&gt;cugraph-cu12) (0.5.2)
+
+Requirement already satisfied: yarl&lt;2.0,&gt;=1.17.0 in /usr/local/lib/python3.12/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=0.6.0-&gt;cugraph-cu12) (1.24.2)
+
+Requirement already satisfied: mdurl~=0.1 in /usr/local/lib/python3.12/dist-packages (from markdown-it-py&gt;=2.2.0-&gt;rich-&gt;cudf-cu12) (0.1.2)
+
+Requirement already satisfied: six&gt;=1.5 in /usr/local/lib/python3.12/dist-packages (from python-dateutil&gt;=2.8.2-&gt;pandas&lt;2.4.0,&gt;=2.0-&gt;cudf-cu12) (1.17.0)
+
+Requirement already satisfied: MarkupSafe&gt;=2.0 in /usr/local/lib/python3.12/dist-packages (from jinja2&gt;=2.10.3-&gt;distributed==2026.1.1-&gt;rapids-dask-dependency==26.2.*-&gt;cugraph-cu12) (3.0.3)
+
+Requirement already satisfied: idna&gt;=2.0 in /usr/local/lib/python3.12/dist-packages (from yarl&lt;2.0,&gt;=1.17.0-&gt;aiohttp!=4.0.0a0,!=4.0.0a1-&gt;fsspec[http]&gt;=0.6.0-&gt;cugraph-cu12) (3.18)
+
+Installing collected packages: cugraph-cu12
+
+Successfully installed cugraph-cu12-26.2.0
+
+RAPIDS components (cuDF, cuGraph) installed.
+</pre>
+</div>
+</div>
+</div>
+<div id="CWl0jzsMPQcv" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cudf</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cugraph <span class="im">as</span> cg</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="conjunto-de-datos" class="level3">
+<h3 class="anchored" data-anchor-id="conjunto-de-datos">Conjunto de datos</h3>
+<div id="r3-A_Z9LPQc5" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="7401337d-98d8-4dd3-9719-513e6fc51926" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> google.colab <span class="im">import</span> drive</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>drive.mount(<span class="st">'/content/drive'</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>base_path <span class="op">=</span> <span class="st">"/content/drive/MyDrive/Talleres/GPU-Accelerated Graph Analytics/data"</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cudf</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>base_path <span class="op">=</span> <span class="st">"/content/drive/MyDrive/Talleres/GPU-Accelerated Graph Analytics/data"</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>road_nodes <span class="op">=</span> cudf.read_csv(<span class="ss">f"</span><span class="sc">{</span>base_path<span class="sc">}</span><span class="ss">/road_nodes.csv"</span>, dtype<span class="op">=</span>[<span class="st">'str'</span>, <span class="st">'float32'</span>, <span class="st">'float32'</span>, <span class="st">'str'</span>])</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>road_graph <span class="op">=</span> cudf.read_csv(<span class="ss">f"</span><span class="sc">{</span>base_path<span class="sc">}</span><span class="ss">/road_graph.csv"</span>, dtype<span class="op">=</span>[<span class="st">'int32'</span>, <span class="st">'int32'</span>, <span class="st">'float32'</span>])</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>speed_graph <span class="op">=</span> cudf.read_csv(<span class="ss">f"</span><span class="sc">{</span>base_path<span class="sc">}</span><span class="ss">/road_graph_speed.csv"</span>, dtype<span class="op">=</span>[<span class="st">'int32'</span>, <span class="st">'int32'</span>, <span class="st">'float32'</span>])</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>node_map <span class="op">=</span> cudf.read_csv(<span class="ss">f"</span><span class="sc">{</span>base_path<span class="sc">}</span><span class="ss">/node_graph_map.csv"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Mounted at /content/drive</code></pre>
+</div>
+</div>
+<div id="_jPyklBpCPzm" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="e529b0b9-4b33-4c85-b77f-48f23ec1d013" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Eliminamos duplicados en road_nodes (algunos nodos aparecen en varios tiles del mapa original)</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>road_nodes <span class="op">=</span> road_nodes.drop_duplicates()</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'road_nodes:   '</span>, road_nodes.shape)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'road_graph:   '</span>, road_graph.shape)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'speed_graph:  '</span>, speed_graph.shape)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'node_map:     '</span>, node_map.shape)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>road_nodes:    (3078117, 4)
+road_graph:    (7218169, 3)
+speed_graph:   (7218169, 3)
+node_map:      (3078117, 2)</code></pre>
+</div>
+</div>
+<div id="6tDdP_jXPQc-" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:143}}" data-outputid="48a014ab-929e-477c-ca12-075bead672ad" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>road_nodes.head(<span class="dv">3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">node_id</th>
+<th data-quarto-table-cell-role="th">east</th>
+<th data-quarto-table-cell-role="th">north</th>
+<th data-quarto-table-cell-role="th">type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>id02FE73D4-E88D-4119-8DC2-6E80DE6F6594</td>
+<td>320608.09375</td>
+<td>870994.0000</td>
+<td>junction</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>id634D65C1-C38B-4868-9080-2E1E47F0935C</td>
+<td>320628.50000</td>
+<td>871103.8125</td>
+<td>road end</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>idDC14D4D1-774E-487D-8EDE-60B129E5482C</td>
+<td>320635.46875</td>
+<td>870983.8750</td>
+<td>junction</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="y1HZiNk3PQdB" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:143}}" data-outputid="29d607d9-dfe4-45ca-a2b8-a3c104c2813a" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>road_graph.head(<span class="dv">3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">src</th>
+<th data-quarto-table-cell-role="th">dst</th>
+<th data-quarto-table-cell-role="th">length</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>0</td>
+<td>129165</td>
+<td>44.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>1</td>
+<td>1678323</td>
+<td>70.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>1</td>
+<td>2372610</td>
+<td>18.0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="QePZMN9IPQdE" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:143}}" data-outputid="f52c40f3-35eb-489e-e984-b1f7488d85f5" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>speed_graph.head(<span class="dv">3</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">src</th>
+<th data-quarto-table-cell-role="th">dst</th>
+<th data-quarto-table-cell-role="th">length_s</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>0</td>
+<td>129165</td>
+<td>3.280848</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>1</td>
+<td>1678323</td>
+<td>5.219531</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>1</td>
+<td>2372610</td>
+<td>1.342165</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="construcción-del-grafo" class="level2">
+<h2 class="anchored" data-anchor-id="construcción-del-grafo">4. Construcción del grafo</h2>
+<p>Una red de carreteras vive naturalmente en dos tablas:</p>
+<ul>
+<li>Una tabla de <strong>nodos</strong> (las intersecciones), con atributos como coordenadas.</li>
+<li>Una tabla de <strong>aristas</strong> (los tramos), con los IDs de origen y destino, más el peso.</li>
+</ul>
+<p>Esa estructura (una lista de aristas con pesos) es exactamente lo que necesita cuGraph para construir el grafo. Es necesario indicar al modelo que cada fila de esta tabla es una conexión entre dos nodos.</p>
+<p>La función <code>from_cudf_edgelist</code> lee exactamente eso:</p>
+<div id="7qDE_0h0PQdH" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="c5464614-a90d-4bed-9039-74b30d62ee27" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cupy <span class="im">as</span> cp</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> cg.Graph()</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>t0 <span class="op">=</span> time.time()</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>G.from_cudf_edgelist(road_graph, source<span class="op">=</span><span class="st">'src'</span>, destination<span class="op">=</span><span class="st">'dst'</span>, edge_attr<span class="op">=</span><span class="st">'length'</span>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>cp.cuda.Stream.null.synchronize()</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> time.time()</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Construcción del grafo en GPU: </span><span class="sc">{</span>t1<span class="op">-</span>t0<span class="sc">:.3f}</span><span class="ss"> segundos'</span>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Nodos en el grafo: </span><span class="sc">{</span>G<span class="sc">.</span>number_of_nodes()<span class="sc">:,}</span><span class="ss">'</span>)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Aristas en el grafo: </span><span class="sc">{</span>G<span class="sc">.</span>number_of_edges()<span class="sc">:,}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Construcción del grafo en GPU: 0.633 segundos
+Nodos en el grafo: 3,078,117
+Aristas en el grafo: 3,620,793</code></pre>
+</div>
+</div>
+<p><strong>Nota:</strong> Estamos usando un <code>cg.Graph()</code> no dirigido, con el que cada fila de la tabla de aristas genera automáticamente dos conexiones (ida y vuelta). Por eso, si la tabla tiene <span class="math inline">\(N\)</span> filas, el grafo tendrá <span class="math inline">\(2N\)</span> aristas. Esto es apropiado para carreteras de doble sentido; si quisiéramos modelar calles de un solo sentido usaríamos <code>cg.DiGraph()</code>.</p>
+<section id="comparación-con-networkx-en-cpu" class="level3">
+<h3 class="anchored" data-anchor-id="comparación-con-networkx-en-cpu">Comparación con NetworkX en CPU</h3>
+<p>Para apreciar el valor de la aceleración GPU, construyamos el mismo grafo con NetworkX. En el entorno GPU-T4 de Google Colab, los tiempos seguirán siendo más que competentes, pero sirven como referencia para entender la amplia mejora que supone el uso de procesos en GPU.</p>
+<blockquote class="blockquote">
+<p>Estos bloques reconstruyen el grafo en CPU como un baseline para medir los tiempos de ejecución con diferente hardware; el resultado se desecha. El resto del taller usa cuGraph para un trabajo más eficiente.</p>
+</blockquote>
+<div id="LT_yEH1bPQdK" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="70f32b9c-2ae3-4c33-eab8-d3a2506aec72" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Construimos el grafo completo con NetworkX en CPU</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>road_graph_pd <span class="op">=</span> road_graph.to_pandas()</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Construyendo grafo NetworkX con </span><span class="sc">{</span><span class="bu">len</span>(road_graph_pd)<span class="sc">:,}</span><span class="ss"> aristas...'</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>time G_nx <span class="op">=</span> nx.from_pandas_edgelist(road_graph_pd, source<span class="op">=</span><span class="st">'src'</span>, target<span class="op">=</span><span class="st">'dst'</span>, edge_attr<span class="op">=</span><span class="st">'length'</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Nodos: </span><span class="sc">{</span>G_nx<span class="sc">.</span>number_of_nodes()<span class="sc">:,}</span><span class="ss"> | Aristas: </span><span class="sc">{</span>G_nx<span class="sc">.</span>number_of_edges()<span class="sc">:,}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Construyendo grafo NetworkX con 7,218,169 aristas...
+CPU times: user 34 s, sys: 1.26 s, total: 35.3 s
+Wall time: 35.6 s
+Nodos: 3,078,117 | Aristas: 3,620,793</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="análisis-estructural-de-la-red" class="level2">
+<h2 class="anchored" data-anchor-id="análisis-estructural-de-la-red">5. Análisis estructural de la red</h2>
+<p>Antes de responder la pregunta central, exploremos la estructura del grafo. Esto es análogo a hacer un <code>.describe()</code> en pandas: queremos entender qué tan conectada está la red, si hay nodos críticos, y si existen irregularidades.</p>
+<section id="distribución-de-grados" class="level3">
+<h3 class="anchored" data-anchor-id="distribución-de-grados">Distribución de grados</h3>
+<p>Primero, revisamos las estadísticas de grado de los nodos.</p>
+<div id="8Qw6MErdPQdR" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="bb53b8e4-06d7-4f11-9959-951426d98f56" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>deg_df <span class="op">=</span> G.degree()</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(deg_df[<span class="st">'degree'</span>].describe()[<span class="dv">1</span>:])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>mean     4.689990
+std      1.913452
+min      2.000000
+25%      2.000000
+50%      6.000000
+75%      6.000000
+max     16.000000
+Name: degree, dtype: float64</code></pre>
+</div>
+</div>
+<p>Recuerda que, en un grafo no dirigido, cada arista cuenta dos veces para el grado (una por cada extremo). Por eso todos los grados deberían ser múltiplos de 2. Para asegurarnos, verificamos que no haya nodos con grado impar.</p>
+<div id="CzBxqVA6PQdU" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="6a9314df-ac6d-4a98-8ec8-295a775caa91" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>nodos_grado_impar <span class="op">=</span> deg_df[deg_df[<span class="st">'degree'</span>].mod(<span class="dv">2</span>) <span class="op">==</span> <span class="dv">1</span>]</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Nodos con grado impar: </span><span class="sc">{</span><span class="bu">len</span>(nodos_grado_impar)<span class="sc">}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Nodos con grado impar: 0</code></pre>
+</div>
+</div>
+</section>
+<section id="nodos-más-conectados" class="level3">
+<h3 class="anchored" data-anchor-id="nodos-más-conectados">Nodos más conectados</h3>
+<p>Los nodos con mayor grado son las intersecciones más importantes de la red: concentradores viales donde convergen muchas carreteras. Podemos revisar los más importantes.</p>
+<div id="_gjcpaUoPQdX" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:363}}" data-outputid="2cf84ab7-e5ae-45ca-eec9-0ae5e10a0b9a" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>deg_df.nlargest(<span class="dv">10</span>, <span class="st">'degree'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">degree</th>
+<th data-quarto-table-cell-role="th">vertex</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>16</td>
+<td>652907</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>16</td>
+<td>1252792</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>14</td>
+<td>1606375</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>14</td>
+<td>1826781</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>14</td>
+<td>1990110</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">5</th>
+<td>14</td>
+<td>2122903</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">6</th>
+<td>12</td>
+<td>14774</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">7</th>
+<td>12</td>
+<td>48566</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">8</th>
+<td>12</td>
+<td>61891</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">9</th>
+<td>12</td>
+<td>332706</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>Al mismo tiempo, podemos formular consultas para saber, por ejemplo, cuántos nodos tienen un grado mínimo. Es decir, y considerando lo establecido durante los conceptos fundamentales, cuántos nodos son un dead-end o callejones sin salida.</p>
+<div id="mFI2Wl2qPQdY" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="deb8e426-90c2-490a-b205-e082d6b7bd50" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>min_degree <span class="op">=</span> <span class="bu">int</span>(deg_df[<span class="st">'degree'</span>].<span class="bu">min</span>())</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>dead_ends <span class="op">=</span> <span class="bu">len</span>(deg_df[deg_df[<span class="st">'degree'</span>] <span class="op">==</span> min_degree])</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Nodos con grado </span><span class="sc">{</span>min_degree<span class="sc">}</span><span class="ss"> (extremos de carretera / callejones sin salida): </span><span class="sc">{</span>dead_ends<span class="sc">:,}</span><span class="ss">'</span>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Representan el </span><span class="sc">{</span><span class="dv">100</span><span class="op">*</span>dead_ends<span class="op">/</span><span class="bu">len</span>(deg_df)<span class="sc">:.1f}</span><span class="ss">% de los nodos'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Nodos con grado 2 (extremos de carretera / callejones sin salida): 941,442
+Representan el 30.6% de los nodos</code></pre>
+</div>
+</div>
+</section>
+<section id="loops-en-la-red" class="level3">
+<h3 class="anchored" data-anchor-id="loops-en-la-red">Loops en la red</h3>
+<p>Algunos tramos forman un loop: la carretera sale y vuelve al mismo nodo (una rotonda, por ejemplo).</p>
+<div id="J_-dgmt8PQdZ" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="cb0e6062-96b5-44cd-b183-95291665d85a" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>loops <span class="op">=</span> road_graph.loc[road_graph[<span class="st">'src'</span>] <span class="op">==</span> road_graph[<span class="st">'dst'</span>]]</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Aristas en loop (src == dst): </span><span class="sc">{</span><span class="bu">len</span>(loops)<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">len</span>(loops) <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(loops.head())</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Aristas en loop (src == dst): 23417
+     src  dst  length
+4      2    2    55.0
+145   62   62   108.0
+293  124  124    67.0
+471  196  196    26.0
+571  240  240    44.0</code></pre>
+</div>
+</div>
+</section>
+<section id="centralidad-de-intermediación-sobre-la-muestra" class="level3">
+<h3 class="anchored" data-anchor-id="centralidad-de-intermediación-sobre-la-muestra">Centralidad de intermediación sobre la muestra</h3>
+<p>En este caso, podemos calcular centralidad de intermediación. Trabajaremos sobre el grafo de NetworkX usando cuGraph como backend. Esto nos dice qué nodos actúan como puentes críticos en la red: si los eliminásemos, muchas rutas dejarían de existir.</p>
+<p>En este caso, intentar calcular la centralidad de intermediación sobre el grafo completo (<code>G_nx</code>), que representa toda la red de carreteras de Gran Bretaña con millones de aristas, excede drásticamente la capacidad de memoria de la GPU, incluso utilizando cuGraph como backend. A pesar de la aceleración que ofrece cuGraph, hay límites físicos de memoria que no pueden ser superados si el grafo es demasiado grande.</p>
+<p>Entonces, si el grafo completo es demasiado grande para la GPU, reducimos el grafo a 10,000 aristas para una nueva demostración.</p>
+<div id="443b6dc7" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># bc = nx.betweenness_centrality(G_nx, backend="cugraph")</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># top_bc = sorted(bc.items(), key=lambda x: x[1], reverse=True)[:5]</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># for nodo, valor in top_bc:</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co">#     print(f'  Nodo {nodo:&gt;6}  →  {valor:.6f}')</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="e2iuKxb7PQdb" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="01b9893a-6c51-4e61-b554-3e10f9a9726d" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>sample_bc_edges <span class="op">=</span> road_graph.sample(n<span class="op">=</span><span class="dv">10000</span>, random_state<span class="op">=</span><span class="dv">42</span>).to_pandas()</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>sample_G_nx_bc <span class="op">=</span> nx.from_pandas_edgelist(sample_bc_edges, source<span class="op">=</span><span class="st">'src'</span>, target<span class="op">=</span><span class="st">'dst'</span>, edge_attr<span class="op">=</span><span class="st">'length'</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>bc <span class="op">=</span> nx.betweenness_centrality(sample_G_nx_bc, backend<span class="op">=</span><span class="st">"cugraph"</span>)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>top_bc <span class="op">=</span> <span class="bu">sorted</span>(bc.items(), key<span class="op">=</span><span class="kw">lambda</span> x: x[<span class="dv">1</span>], reverse<span class="op">=</span><span class="va">True</span>)[:<span class="dv">5</span>]</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> nodo, valor <span class="kw">in</span> top_bc:</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'  Nodo </span><span class="sc">{</span>nodo<span class="sc">:&gt;6}</span><span class="ss">  →  </span><span class="sc">{</span>valor<span class="sc">:.6f}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Nodo 1981404  →  0.000000
+  Nodo 696225  →  0.000000
+  Nodo 1454746  →  0.000000
+  Nodo 126187  →  0.000000
+  Nodo 1695350  →  0.000000</code></pre>
+</div>
+</div>
+<p>Si bien un enfoque apropiado para estas operaciones sería probar calcular las métricas computacionalmente complejas construyendo un nuevo grafo más pequeño a partir de un subconjunto de datos con muestras reducidas, en este caso no es suficiente.</p>
+<p>Incluso probando con alrededor de 10,000 aristas, los resultados arrojaron valores de centralidad de 0.0 para todos los nodos principales. Esto se debe a que, al reducir tan drásticamente el tamaño del grafo, se pierden demasiadas relaciones estructurales cruciales. Los caminos mínimos y las interconexiones que definen la intermediación de un nodo simplemente no se capturan con una muestra tan pequeña, haciendo que el algoritmo no encuentre nodos que actúen significativamente como puentes.</p>
+<p>Para algoritmos tan demandantes, y con grafos de la magnitud del actual, es un desafío encontrar un equilibrio entre la manejabilidad computacional y la representatividad de la muestra.</p>
+</section>
+</section>
+<section id="camino-mínimo-desde-un-solo-origen-sssp" class="level2">
+<h2 class="anchored" data-anchor-id="camino-mínimo-desde-un-solo-origen-sssp">6. Camino mínimo desde un solo origen (SSSP)</h2>
+<p>El algoritmo <strong>Single Source Shortest Path (SSSP)</strong> responde a la pregunta: dado un nodo de origen, ¿cuál es la distancia mínima hasta <em>todos</em> los demás nodos del grafo?</p>
+<p>En el contexto de nuestra red de carreteras, lo aplicaremos dos veces: 1. Con el grafo ponderado por <strong>longitud</strong> (metros) para encontrar las rutas más cortas en distancia. 2. Con el grafo ponderado por <strong>tiempo de viaje</strong> (segundos) para encontrar las rutas más rápidas.</p>
+<p>Haremos uso nuevamente de cuGraph, que implementa el algoritmo de Bellman-Ford generalizado sobre GPU, con lo que es capaz de calcular millones de caminos mínimos en segundos.</p>
+<section id="construcción-del-grafo-de-tiempos" class="level3">
+<h3 class="anchored" data-anchor-id="construcción-del-grafo-de-tiempos">Construcción del grafo de tiempos</h3>
+<p>Primero que todo, construimos el grafo ponderado por tiempo de viaje, en segundos.</p>
+<div id="OTp1TyrePQdf" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="f3c2c32d-1c02-4bae-95f9-95d5711a6bd2" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>G_speed <span class="op">=</span> cg.Graph()</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>G_speed.from_cudf_edgelist(speed_graph, source<span class="op">=</span><span class="st">'src'</span>, destination<span class="op">=</span><span class="st">'dst'</span>, edge_attr<span class="op">=</span><span class="st">'length_s'</span>)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Nodos: </span><span class="sc">{</span>G_speed<span class="sc">.</span>number_of_nodes()<span class="sc">:,}</span><span class="ss"> | Aristas: </span><span class="sc">{</span>G_speed<span class="sc">.</span>number_of_edges()<span class="sc">:,}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Nodos: 3,078,117 | Aristas: 3,620,793</code></pre>
+</div>
+</div>
+</section>
+<section id="selección-del-nodo-de-partida" class="level3">
+<h3 class="anchored" data-anchor-id="selección-del-nodo-de-partida">Selección del nodo de partida</h3>
+<p>Elegimos el nodo con mayor grado como punto de partida: es la intersección más conectada de la red, posiblemente la que permita alcanzar el resto de la red más eficientemente.</p>
+<div id="mhVNmWjePQdh" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="d6cd7dfe-e6e5-4a30-c759-798fc9d9f554" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>deg_speed <span class="op">=</span> G_speed.degree()</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>nodo_origen <span class="op">=</span> deg_speed.nlargest(<span class="dv">1</span>, <span class="st">'degree'</span>)[<span class="st">'vertex'</span>].iloc[<span class="dv">0</span>]</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Nodo de origen seleccionado: </span><span class="sc">{</span>nodo_origen<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Grado: </span><span class="sc">{</span>deg_speed[deg_speed[<span class="st">"vertex"</span>] <span class="op">==</span> nodo_origen][<span class="st">"degree"</span>]<span class="sc">.</span>iloc[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Nodo de origen seleccionado: 652907
+Grado: 16</code></pre>
+</div>
+</div>
+</section>
+<section id="sssp-con-pesos-de-distancia" class="level3">
+<h3 class="anchored" data-anchor-id="sssp-con-pesos-de-distancia">SSSP con pesos de distancia</h3>
+<p>A continuación, calculamos el SSSP desde un único nodo de origen hasta todos los demás nodos del grafo. En este caso, el grafo está ponderado por la longitud en metros de los segmentos de carretera, lo que significa que el algoritmo encontrará las rutas más cortas en términos de distancia física.</p>
+<p>El resultado almacenado en <code>dist_metros</code> contendrá la distancia mínima para cada nodo alcanzable, lo que nos permite entender qué tan ‘cerca’ (en metros) está cada punto de la red del nodo de origen seleccionado.</p>
+<div id="qpJDO5qrPQdk" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:206}}" data-outputid="4baa6127-87e4-4673-a074-73d5abcc71b3" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>dist_metros <span class="op">=</span> cg.sssp(G, nodo_origen)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>dist_metros.head()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="20">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">distance</th>
+<th data-quarto-table-cell-role="th">vertex</th>
+<th data-quarto-table-cell-role="th">predecessor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>0.0</td>
+<td>652907</td>
+<td>-1</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>110322.0</td>
+<td>1252792</td>
+<td>1378560</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>213691.0</td>
+<td>1606375</td>
+<td>1375709</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>106434.0</td>
+<td>1826781</td>
+<td>2377706</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>253196.0</td>
+<td>1990110</td>
+<td>1652530</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="tratamiento-de-nodos-inalcanzables" class="level3">
+<h3 class="anchored" data-anchor-id="tratamiento-de-nodos-inalcanzables">Tratamiento de nodos inalcanzables</h3>
+<p>En algoritmos como SSSP, es común que no todos los nodos del grafo sean alcanzables desde el nodo de origen. Esto puede ocurrir si el grafo no es completamente conexo.</p>
+<p>Para estos nodos inalcanzables, las implementaciones de grafos aceleradas por GPU, como <code>cugraph</code>, a menudo asignan un valor numérico muy grande en lugar de <code>Inf</code> o <code>NaN</code>. Específicamente, suelen usar el valor máximo representable por el tipo de dato flotante utilizado. Esto se hace por eficiencia computacional en la GPU, ya que <code>Inf</code> o <code>NaN</code> pueden requerir lógica de manejo especial que ralentiza las operaciones paralelas.</p>
+<p>Es crucial filtrar estos valores antes de calcular estadísticas (como la media o el máximo de distancias), ya que de lo contrario sesgarían drásticamente los resultados, haciendo que parezca que existen distancias extremadamente grandes que en realidad solo indican falta de conexión. Al filtrarlos, nos aseguramos de que nuestras estadísticas reflejen solo las distancias reales dentro de la componente conexa del nodo de origen.</p>
+<div id="XYY3spqAPQdl" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="544c3ccf-00c0-403c-bf0f-9ee425328ebb" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>max_float32_val <span class="op">=</span> np.finfo(np.float32).<span class="bu">max</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Nodos no alcanzables: </span><span class="sc">{</span>(dist_metros[<span class="st">"distance"</span>] <span class="op">&gt;=</span> max_float32_val)<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">:,}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Nodos no alcanzables: 29,446</code></pre>
+</div>
+</div>
+<div id="1rUxQaZxygzM" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="7645820f-8cb9-47bc-ff03-ffc0282e54c8" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>dist_metros_validas <span class="op">=</span> dist_metros[<span class="st">'distance'</span>].loc[dist_metros[<span class="st">'distance'</span>] <span class="op">&lt;</span> max_float32_val]</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">Distribución de distancias desde el nodo origen, excluyendo nodos desconectados:'</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dist_metros_validas.describe()[<span class="dv">1</span>:])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Distribución de distancias desde el nodo origen, excluyendo nodos desconectados:
+mean    210086.093750
+std     137145.765625
+min          0.000000
+25%     125054.500000
+50%     181815.500000
+75%     252472.250000
+max     868870.500000
+Name: distance, dtype: float64</code></pre>
+</div>
+</div>
+<p>Una vez filtrados los nodos inalcanzables, la distribución de distancias desde el nodo de origen muestra un rango coherente de valores. La distancia media (210 km) y la distancia máxima (868 km) nos dan una idea de la extensión de la red desde el punto de partida seleccionado. Los cuartiles nos permiten entender la dispersión: el 75% de los nodos alcanzables están a menos de 252 km del origen.</p>
+</section>
+<section id="sssp-con-pesos-de-tiempo" class="level3">
+<h3 class="anchored" data-anchor-id="sssp-con-pesos-de-tiempo">SSSP con pesos de tiempo</h3>
+<p>Ahora, repetimos el proceso de SSSP, pero utilizando el grafo ponderado por <code>length_s</code> (tiempo en segundos). Este cálculo nos dará el tiempo mínimo de viaje desde el mismo nodo de origen hasta cualquier otro punto de la red, permitiéndonos identificar las rutas más rápidas.</p>
+<p>Es importante recordar que el camino más corto en distancia no siempre es el más rápido. Factores como los límites de velocidad, el tipo de carretera o la congestión pueden hacer que una ruta más larga en kilómetros sea más eficiente en tiempo.</p>
+<div id="UBkG92PQPQdn" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="1a47af00-9544-42f9-f86f-6d08dd9fbf65" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>dist_tiempo <span class="op">=</span> cg.sssp(G_speed, nodo_origen)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>max_float32_val <span class="op">=</span> np.finfo(np.float32).<span class="bu">max</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>dist_tiempo_validas <span class="op">=</span> dist_tiempo[<span class="st">'distance'</span>].loc[dist_tiempo[<span class="st">'distance'</span>] <span class="op">&lt;</span> max_float32_val]</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">Distribución de tiempos (segundos) desde el nodo origen:'</span>)</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dist_tiempo_validas.describe()[<span class="dv">1</span>:])</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'</span><span class="ch">\n</span><span class="ss">Tiempo máximo alcanzable: </span><span class="sc">{</span>dist_tiempo_validas<span class="sc">.</span><span class="bu">max</span>()<span class="op">/</span><span class="dv">3600</span><span class="sc">:.1f}</span><span class="ss"> horas'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Distribución de tiempos (segundos) desde el nodo origen:
+mean     7424.899902
+std      4666.250488
+min         0.000000
+25%      4484.137695
+50%      6451.895508
+75%      9064.045410
+max     31424.103516
+Name: distance, dtype: float64
+
+Tiempo máximo alcanzable: 8.7 horas</code></pre>
+</div>
+</div>
+<p>El cálculo del SSSP con pesos de tiempo nos proporciona una distribución de los tiempos mínimos de viaje desde el nodo de origen. La media de 7424.9 segundos (aproximadamente 2.06 horas) y un tiempo máximo alcanzable de 8.7 horas, nos dan una perspectiva temporal de la red. Estos valores son cruciales para entender la accesibilidad y la eficiencia de la conectividad desde el nodo de origen, especialmente para aplicaciones donde el tiempo es el factor más crítico.</p>
+</section>
+<section id="preparación-de-los-resultados-para-visualización" class="level3">
+<h3 class="anchored" data-anchor-id="preparación-de-los-resultados-para-visualización">Preparación de los resultados para visualización</h3>
+<p>El resultado del SSSP es una tabla <code>(vertex, distance, predecessor)</code>. Sin embargo, para visualizarlo geográficamente, debemos cruzarlo con las coordenadas de los nodos a través del <code>node_graph_map</code>.</p>
+<div id="qGzv4px6PQdr" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:223}}" data-outputid="dd592e5d-d278-4e33-d581-f9149aad53fc" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Unimos las distancias con las coordenadas geográficas</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>viz_df <span class="op">=</span> road_nodes.merge(node_map, on<span class="op">=</span><span class="st">'node_id'</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>viz_df <span class="op">=</span> viz_df.merge(dist_tiempo, left_on<span class="op">=</span><span class="st">'graph_id'</span>, right_on<span class="op">=</span><span class="st">'vertex'</span>)</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtramos nodos no alcanzables e invertimos la escala</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Distancia menor -&gt; valor más alto -&gt; color más brillante</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>viz_df <span class="op">=</span> viz_df[viz_df[<span class="st">'distance'</span>] <span class="op">&lt;</span> max_float32_val].copy()</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>viz_df[<span class="st">'tiempo_inv'</span>] <span class="op">=</span> viz_df[<span class="st">'distance'</span>].<span class="bu">pow</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">2</span>).mul(<span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Nodos con ruta válida: </span><span class="sc">{</span><span class="bu">len</span>(viz_df)<span class="sc">:,}</span><span class="ss">'</span>)</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>viz_df[[<span class="st">'node_id'</span>, <span class="st">'east'</span>, <span class="st">'north'</span>, <span class="st">'distance'</span>, <span class="st">'tiempo_inv'</span>]].head()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Nodos con ruta válida: 3,048,671</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="26">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">node_id</th>
+<th data-quarto-table-cell-role="th">east</th>
+<th data-quarto-table-cell-role="th">north</th>
+<th data-quarto-table-cell-role="th">distance</th>
+<th data-quarto-table-cell-role="th">tiempo_inv</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>id30401FD3-2046-40FE-AA54-0FE4F1AD20D6</td>
+<td>380442.00000</td>
+<td>857793.0000</td>
+<td>24031.281250</td>
+<td>-155.020264</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>idB5CC8A75-765D-4847-B9C8-16D77B803818</td>
+<td>380434.00000</td>
+<td>857803.0000</td>
+<td>24032.250000</td>
+<td>-155.023392</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>id0E8010C2-F329-4128-BC17-1EC645142A01</td>
+<td>381577.59375</td>
+<td>857983.8125</td>
+<td>24045.074219</td>
+<td>-155.064743</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>id4F8B9D66-5C63-49F6-8CE5-CF5802F0F387</td>
+<td>380828.15625</td>
+<td>858005.3125</td>
+<td>24077.212891</td>
+<td>-155.168335</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>id7298D90F-3290-44AD-B8BE-BCDF83190D3B</td>
+<td>381088.81250</td>
+<td>858156.8125</td>
+<td>24083.847656</td>
+<td>-155.189713</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="visualización-interactiva" class="level2">
+<h2 class="anchored" data-anchor-id="visualización-interactiva">7. Visualización interactiva</h2>
+<p>Para esta última sección, haremos uso de la herramienta Graphistry para transformar los resultados numéricos del SSSP en un mapa interactivo donde el color de cada nodo indica el tiempo de viaje desde el punto de origen. Los nodos más brillantes están más cerca; los más oscuros están más lejos.</p>
+<section id="configuración-de-graphistry" class="level3">
+<h3 class="anchored" data-anchor-id="configuración-de-graphistry">Configuración de Graphistry</h3>
+<div id="SFBJDuMiPQd3" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="3f1239b4-76c1-471d-ea42-63aeec27e1cc" data-execution_count="27">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install graphistry</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="ansi-escaped-output">
+<pre>Collecting graphistry
+
+  Downloading graphistry-0.56.1-py3-none-any.whl.metadata (28 kB)
+
+Requirement already satisfied: numpy in /usr/local/lib/python3.12/dist-packages (from graphistry) (2.0.2)
+
+Collecting palettable&gt;=3.0 (from graphistry)
+
+  Downloading palettable-3.3.3-py2.py3-none-any.whl.metadata (3.3 kB)
+
+Requirement already satisfied: pandas in /usr/local/lib/python3.12/dist-packages (from graphistry) (2.2.2)
+
+Requirement already satisfied: lark&lt;2,&gt;=1.1 in /usr/local/lib/python3.12/dist-packages (from graphistry) (1.3.1)
+
+Requirement already satisfied: pyarrow&gt;=0.15.0 in /usr/local/lib/python3.12/dist-packages (from graphistry) (18.1.0)
+
+Requirement already satisfied: requests in /usr/local/lib/python3.12/dist-packages (from graphistry) (2.32.4)
+
+Requirement already satisfied: typing-extensions in /usr/local/lib/python3.12/dist-packages (from graphistry) (4.15.0)
+
+Requirement already satisfied: packaging&gt;=20.1 in /usr/local/lib/python3.12/dist-packages (from graphistry) (26.2)
+
+Requirement already satisfied: setuptools in /usr/local/lib/python3.12/dist-packages (from graphistry) (75.2.0)
+
+Requirement already satisfied: python-dateutil&gt;=2.8.2 in /usr/local/lib/python3.12/dist-packages (from pandas-&gt;graphistry) (2.9.0.post0)
+
+Requirement already satisfied: pytz&gt;=2020.1 in /usr/local/lib/python3.12/dist-packages (from pandas-&gt;graphistry) (2025.2)
+
+Requirement already satisfied: tzdata&gt;=2022.7 in /usr/local/lib/python3.12/dist-packages (from pandas-&gt;graphistry) (2026.2)
+
+Requirement already satisfied: charset_normalizer&lt;4,&gt;=2 in /usr/local/lib/python3.12/dist-packages (from requests-&gt;graphistry) (3.4.7)
+
+Requirement already satisfied: idna&lt;4,&gt;=2.5 in /usr/local/lib/python3.12/dist-packages (from requests-&gt;graphistry) (3.18)
+
+Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in /usr/local/lib/python3.12/dist-packages (from requests-&gt;graphistry) (2.5.0)
+
+Requirement already satisfied: certifi&gt;=2017.4.17 in /usr/local/lib/python3.12/dist-packages (from requests-&gt;graphistry) (2026.5.20)
+
+Requirement already satisfied: six&gt;=1.5 in /usr/local/lib/python3.12/dist-packages (from python-dateutil&gt;=2.8.2-&gt;pandas-&gt;graphistry) (1.17.0)
+
+Downloading graphistry-0.56.1-py3-none-any.whl (829 kB)
+
+   <span class="ansi-bright-black-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">829.3/829.3 kB</span> <span class="ansi-red-fg">52.6 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+
+Downloading palettable-3.3.3-py2.py3-none-any.whl (332 kB)
+
+   <span class="ansi-bright-black-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">332.3/332.3 kB</span> <span class="ansi-red-fg">31.6 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>
+
+Installing collected packages: palettable, graphistry
+
+Successfully installed graphistry-0.56.1 palettable-3.3.3
+</pre>
+</div>
+</div>
+</div>
+<div id="z7kJJ-oH4ttQ" class="cell" data-execution_count="51">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> graphistry</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Regístrate en hub.graphistry.com y reemplaza con tus credenciales</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co"># graphistry.register(api=3, username='USUARIO', password='PASSWORD')</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="visualización-de-nodos-por-tiempo-de-viaje" class="level3">
+<h3 class="anchored" data-anchor-id="visualización-de-nodos-por-tiempo-de-viaje">Visualización de nodos por tiempo de viaje</h3>
+<p>Graphistry funciona de manera óptima con <code>DataFrames</code> de pandas para cargar los datos de nodos y aristas. Aunque cuGraph y cuDF ofrecen un rendimiento superior en la GPU para el cálculo de algoritmos, para la fase de visualización es necesario convertir nuestros <code>DataFrames</code> de cuDF a pandas. Esta conversión permite que Graphistry acceda y procese los datos de manera compatible con su API.</p>
+<p>Además, dado que estamos trabajando con una red de millones de nodos y aristas, es inviable enviar el grafo completo a la plataforma de Graphistry, especialmente en un entorno de taller. Para evitar errores de ‘Request Entity Too Large’ o problemas de conexión SSL, aplicaremos un muestreo significativo. Esto reduce el conjunto de datos a un tamaño manejable (por ejemplo, 50,000 nodos y 50,000 aristas), lo que permite que la visualización cargue efectivamente y sea interactiva sin sobrecargar los recursos.</p>
+<div id="VCJnnhPqPQd5" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="c0229a46-c13c-4589-f182-fd6ab28be1bb" data-execution_count="29">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>viz_sample <span class="op">=</span> viz_df.to_pandas()</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>edges_sample <span class="op">=</span> road_graph.to_pandas()</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Nodos en la visualización: </span><span class="sc">{</span><span class="bu">len</span>(viz_sample)<span class="sc">:,}</span><span class="ss">'</span>)</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Aristas en la visualización: </span><span class="sc">{</span><span class="bu">len</span>(edges_sample)<span class="sc">:,}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Nodos en la visualización: 3,048,671
+Aristas en la visualización: 7,218,169</code></pre>
+</div>
+</div>
+<div id="hbWSGvwJPQd6" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:542}}" data-outputid="2dbd3f12-e593-440b-eabe-8b8494b1907d" data-execution_count="47">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>N_VIZ <span class="op">=</span> <span class="dv">50_000</span>   <span class="co"># Limite para la visualización</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>viz_sampled_for_plot <span class="op">=</span> viz_sample.sample(<span class="bu">min</span>(N_VIZ, <span class="bu">len</span>(viz_sample)), random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>edges_sampled_for_plot <span class="op">=</span> edges_sample.sample(<span class="bu">min</span>(N_VIZ, <span class="bu">len</span>(edges_sample)), random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>    graphistry</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>    .nodes(viz_sampled_for_plot, <span class="st">'node_id'</span>, x<span class="op">=</span><span class="st">'east'</span>, y<span class="op">=</span><span class="st">'north'</span>, color<span class="op">=</span><span class="st">'tiempo_inv'</span>)</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>    .edges(edges_sampled_for_plot, <span class="st">'src'</span>, <span class="st">'dst'</span>, weight<span class="op">=</span><span class="st">'length'</span>)</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>    .settings(url_params<span class="op">=</span>{</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">'play'</span>: <span class="dv">0</span>,</span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">'pointSize'</span>: <span class="fl">0.3</span></span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>    .plot()</span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="47">
+
+            <iframe id="9da89e5b-4ea8-40fe-afb9-169b08a08ac8" src="https://hub.graphistry.com/graph/graph.html?dataset=6a3c5e443f3841a88a859d9f0456fe0e&amp;type=arrow&amp;viztoken=e6dd257d-2f1e-4e2c-b908-5731724a98b1&amp;usertag=e4c16715-pygraphistry-0.56.1&amp;splashAfter=1781227025&amp;info=true&amp;play=0&amp;pointSize=0.3" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" oallowfullscreen="true" msallowfullscreen="true" style="width:100%; height:500px; border: 1px solid #DDD; overflow: hidden">
+            </iframe>
+        
+            <script>
+                try {
+                  $("#9da89e5b-4ea8-40fe-afb9-169b08a08ac8").bind('mousewheel', function(e) { e.preventDefault(); });
+                } catch (e) { console.error('exn catching scroll', e); }
+            </script>
+        
+</div>
+</div>
+<p>En este mapa interactivo, cada punto representa un nodo (una intersección de carretera) y las líneas representan las aristas (tramos de carretera). El color de cada nodo representa la accesibilidad desde nuestro punto de origen (el nodo de mayor grado).</p>
+<p>Los nodos se colorean según la variable <code>tiempo_inv</code>, que es una versión inversa y reescalada del tiempo mínimo de viaje desde el nodo de origen. Esto significa que los nodos brillantes (tonos amarillo/verde) están más cerca del origen en términos de tiempo de viaje, mientras que los nodos oscuros (tonos morado/negro) representan nodos que están más lejos del origen en tiempo de viaje.</p>
+</section>
+<section id="construcción-del-árbol-de-caminos-mínimos" class="level3">
+<h3 class="anchored" data-anchor-id="construcción-del-árbol-de-caminos-mínimos">Construcción del Árbol de Caminos Mínimos</h3>
+<p>Una vez calculados los caminos mínimos desde el nodo de origen a todos los demás, el resultado del SSSP (<code>dist_tiempo</code>) no solo nos proporciona la distancia o el tiempo mínimo, sino también el <code>predecessor</code> (predecesor) de cada nodo en ese camino óptimo. Este campo es la clave para reconstruir el Árbol de Caminos Mínimos, una estructura arbórea que conecta el nodo de origen con cada nodo alcanzable a través de su ruta más eficiente. Visualizar este árbol nos permite entender la topología de las rutas óptimas y cómo se distribuye la accesibilidad desde el punto de partida seleccionado.</p>
+<div id="mpuNj6bhPQd8" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="adc3b2a6-db71-4c92-86bb-fb13c820cf92" data-execution_count="40">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>filtered_tree_data <span class="op">=</span> dist_tiempo[</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Filtrar los nodos alcanzables</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    (dist_tiempo[<span class="st">'distance'</span>] <span class="op">&lt;</span> max_float32_val) <span class="op">&amp;</span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Filtrar la fila del nodo origen ya que no es una arista del árbol</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>    (dist_tiempo[<span class="st">'predecessor'</span>] <span class="op">!=</span> <span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>tree_edges <span class="op">=</span> filtered_tree_data[[<span class="st">'vertex'</span>, <span class="st">'predecessor'</span>]].to_pandas()</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>tree_edges.columns <span class="op">=</span> [<span class="st">'dst'</span>, <span class="st">'src'</span>] <span class="co"># 'vertex' es el destino, 'predecessor' es el origen</span></span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Aristas en el árbol de caminos mínimos: </span><span class="sc">{</span><span class="bu">len</span>(tree_edges)<span class="sc">:,}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Aristas en el árbol de caminos mínimos: 3,048,670</code></pre>
+</div>
+</div>
+<div id="MqAh69mjXzhZ" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:206}}" data-outputid="f8357b53-567b-4db3-ac6e-ad32aef861cc" data-execution_count="41">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>tree_edges.head()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="41">
+<div id="df-9a2f25c2-4b91-4594-9eb2-d2eaf1e56f38" class="colab-df-container">
+    <div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">dst</th>
+<th data-quarto-table-cell-role="th">src</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">1</th>
+<td>1252792</td>
+<td>423201</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">2</th>
+<td>1606375</td>
+<td>1311665</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">3</th>
+<td>1826781</td>
+<td>1963186</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">4</th>
+<td>1990110</td>
+<td>1652530</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">5</th>
+<td>2122903</td>
+<td>2727979</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+    <div class="colab-df-buttons">
+
+  <div class="colab-df-container">
+    <button class="colab-df-convert" onclick="convertToInteractive('df-9a2f25c2-4b91-4594-9eb2-d2eaf1e56f38')" title="Convert this dataframe to an interactive table." style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 -960 960 960">
+    <path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"></path>
+  </svg>
+    </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    .colab-df-buttons div {
+      margin-bottom: 4px;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+    <script>
+      const buttonEl =
+        document.querySelector('#df-9a2f25c2-4b91-4594-9eb2-d2eaf1e56f38 button.colab-df-convert');
+      buttonEl.style.display =
+        google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+      async function convertToInteractive(key) {
+        const element = document.querySelector('#df-9a2f25c2-4b91-4594-9eb2-d2eaf1e56f38');
+        const dataTable =
+          await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                    [key], {});
+        if (!dataTable) return;
+
+        const docLinkHtml = 'Like what you see? Visit the ' +
+          '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+          + ' to learn more about interactive tables.';
+        element.innerHTML = '';
+        dataTable['output_type'] = 'display_data';
+        await google.colab.output.renderOutput(dataTable, element);
+        const docLink = document.createElement('div');
+        docLink.innerHTML = docLinkHtml;
+        element.appendChild(docLink);
+      }
+    </script>
+  </div>
+
+
+    </div>
+  </div>
+</div>
+</div>
+<p>El DataFrame <code>tree_edges</code> ahora contiene la información precisa de las 3,048,670 aristas que forman el árbol de caminos mínimos desde nuestro nodo de origen. Cada fila de este DataFrame representa una conexión directa en la ruta más rápida hacia un nodo específico. Hemos filtrado cuidadosamente los nodos inalcanzables y el propio nodo de origen (que no tiene un predecesor en el árbol), asegurando que solo las aristas válidas del árbol sean representadas. Este conjunto de aristas puede graficarse para observar cómo estas rutas óptimas se ramifican y cubren la red, revelando la estructura de accesibilidad más rápida.</p>
+<div id="gjoUXOFaPQd-" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:542}}" data-outputid="3518075b-9e9d-4265-8e1b-139ae31997dc" data-execution_count="50">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>N_TREE_VIZ <span class="op">=</span> <span class="dv">10</span> <span class="co"># Limite para la visualización del árbol</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>tree_sample <span class="op">=</span> tree_edges.sample(<span class="bu">min</span>(N_TREE_VIZ, <span class="bu">len</span>(tree_edges)), random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>viz_sampled_for_tree_plot <span class="op">=</span> viz_sample.sample(<span class="bu">min</span>(N_TREE_VIZ, <span class="bu">len</span>(viz_sample)), random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>    graphistry</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>    .nodes(viz_sampled_for_tree_plot, <span class="st">'node_id'</span>, x<span class="op">=</span><span class="st">'east'</span>, y<span class="op">=</span><span class="st">'north'</span>, color<span class="op">=</span><span class="st">'tiempo_inv'</span>) <span class="co"># Atributos de nodo pasados directamente aquí</span></span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>    .edges(tree_sample, <span class="st">'src'</span>, <span class="st">'dst'</span>)</span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>    .settings(url_params<span class="op">=</span>{<span class="st">'play'</span>: <span class="dv">0</span>, <span class="st">'pointSize'</span>: <span class="fl">0.5</span>, <span class="st">'edgeOpacity'</span>: <span class="fl">0.3</span>})</span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>    .plot()</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="50">
+
+            <iframe id="6cf5ce71-f959-4cea-9035-3866296bbc8f" src="https://hub.graphistry.com/graph/graph.html?dataset=d27c05f734b24f7ab90ce6532fe911ef&amp;type=arrow&amp;viztoken=2b1ba832-650f-4959-a6e7-cca98a2ef0a2&amp;usertag=e4c16715-pygraphistry-0.56.1&amp;splashAfter=1781227342&amp;info=true&amp;play=0&amp;pointSize=0.5&amp;edgeOpacity=0.3" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" oallowfullscreen="true" msallowfullscreen="true" style="width:100%; height:500px; border: 1px solid #DDD; overflow: hidden">
+            </iframe>
+        
+            <script>
+                try {
+                  $("#6cf5ce71-f959-4cea-9035-3866296bbc8f").bind('mousewheel', function(e) { e.preventDefault(); });
+                } catch (e) { console.error('exn catching scroll', e); }
+            </script>
+        
+</div>
+</div>
+<p>Esta visualización presenta un subgrafo especial de la red completa: el árbol de caminos mínimos desde el nodo de origen. A diferencia de la visualización anterior, donde las aristas representaban todas las conexiones viales muestreadas, aquí solo se muestran las aristas que forman parte de las rutas más rápidas desde el punto de partida seleccionado. Cada arista en este árbol apunta desde un nodo <code>src</code> a un <code>dst</code> que está un paso más cerca del origen en el camino mínimo.</p>
+</section>
+</section>
+<section id="actividad" class="level2">
+<h2 class="anchored" data-anchor-id="actividad">8. Actividad</h2>
+<p><strong>Pregunta 1:</strong> Al analizar los grados de los nodos, vimos que todos son múltiplos de 2. ¿Por qué es así en un grafo no dirigido? ¿Qué significaría que un nodo tuviera grado 1 en esta red de carreteras? ¿Y grado 0?</p>
+<p><strong>Pregunta 2:</strong> Ejecutamos el SSSP con dos grafos distintos: uno con pesos de longitud y otro con pesos de tiempo de viaje. Puede que el camino más corto en distancia no sea el mismo que el más rápido. ¿En qué situación real podría ocurrir que el camino más corto en kilómetros sea más lento que una ruta más larga? ¿En qué situaciones podría dársele prioridad a uno o al otro al momento de diseñar una ruta?</p>
+<p><strong>Pregunta 3:</strong> Retomemos la pregunta inicial: <em>¿desde dónde conviene partir si quiero llegar rápido a todos los demás lugares de la red?</em></p>
+<p>En el taller elegimos el nodo de mayor grado como punto de partida. Pero “conviene partir” puede interpretarse de varias maneras:</p>
+<ul>
+<li>Minimizar el tiempo máximo hasta cualquier otro punto (<em>minmax</em>).</li>
+<li>Minimizar la suma total de tiempos a todos los demás.</li>
+<li>Minimizar la distancia al punto más lejano de la red.</li>
+</ul>
+<p>¿Estas tres interpretaciones darían el mismo nodo óptimo? ¿Hay una que te parezca más relevante para, por ejemplo, ubicar un centro de distribución logístico? Justifica tu razonamiento ejemplificando cómo las respuestas a estos enfoques podrían variar y en qué casos podría ser conveniente cada uno.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<script src="../../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

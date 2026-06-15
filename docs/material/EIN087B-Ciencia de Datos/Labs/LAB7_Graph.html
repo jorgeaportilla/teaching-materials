@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Análisis y visualización de grandes conjuntos de datos – Material Docente</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap-6d98dc22342cdec766e9ba27c206e023.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No se han encontrado resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+<link rel="stylesheet" href="../../../styles.scss">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Material Docente</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">Inicio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">Sobre mí</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul>
+  <li><a href="#introducción-a-graphistry" id="toc-introducción-a-graphistry" class="nav-link active" data-scroll-target="#introducción-a-graphistry">Introducción a Graphistry</a>
+  <ul class="collapse">
+  <li><a href="#casos-de-uso-real" id="toc-casos-de-uso-real" class="nav-link" data-scroll-target="#casos-de-uso-real">Casos de uso real</a></li>
+  </ul></li>
+  <li><a href="#fundamentos-teóricos-de-grafos" id="toc-fundamentos-teóricos-de-grafos" class="nav-link" data-scroll-target="#fundamentos-teóricos-de-grafos">Fundamentos teóricos de grafos</a>
+  <ul class="collapse">
+  <li><a href="#tipos-más-comunes" id="toc-tipos-más-comunes" class="nav-link" data-scroll-target="#tipos-más-comunes">Tipos más comunes</a></li>
+  <li><a href="#cuándo-conviene-pensar-en-grafos" id="toc-cuándo-conviene-pensar-en-grafos" class="nav-link" data-scroll-target="#cuándo-conviene-pensar-en-grafos">¿Cuándo conviene pensar en grafos?</a></li>
+  </ul></li>
+  <li><a href="#instalación-y-setup" id="toc-instalación-y-setup" class="nav-link" data-scroll-target="#instalación-y-setup">Instalación y Setup</a>
+  <ul class="collapse">
+  <li><a href="#representaciones-del-grafo" id="toc-representaciones-del-grafo" class="nav-link" data-scroll-target="#representaciones-del-grafo">Representaciones del grafo</a></li>
+  <li><a href="#grafos-dirigidos-vs.-grafos-no-dirigidos" id="toc-grafos-dirigidos-vs.-grafos-no-dirigidos" class="nav-link" data-scroll-target="#grafos-dirigidos-vs.-grafos-no-dirigidos">Grafos dirigidos vs.&nbsp;Grafos no dirigidos</a></li>
+  <li><a href="#ejemplos-rápidos" id="toc-ejemplos-rápidos" class="nav-link" data-scroll-target="#ejemplos-rápidos">Ejemplos rápidos</a></li>
+  <li><a href="#grafos-ponderados" id="toc-grafos-ponderados" class="nav-link" data-scroll-target="#grafos-ponderados">Grafos ponderados</a></li>
+  <li><a href="#centralidad" id="toc-centralidad" class="nav-link" data-scroll-target="#centralidad">Centralidad</a></li>
+  <li><a href="#modelos-de-propagación-epidémica" id="toc-modelos-de-propagación-epidémica" class="nav-link" data-scroll-target="#modelos-de-propagación-epidémica">Modelos de propagación epidémica</a></li>
+  <li><a href="#visualización-de-la-propagación" id="toc-visualización-de-la-propagación" class="nav-link" data-scroll-target="#visualización-de-la-propagación">Visualización de la propagación</a></li>
+  </ul></li>
+  <li><a href="#graphistry-aplicado-a-un-dataset-de-ciberseguridad" id="toc-graphistry-aplicado-a-un-dataset-de-ciberseguridad" class="nav-link" data-scroll-target="#graphistry-aplicado-a-un-dataset-de-ciberseguridad">Graphistry aplicado a un dataset de ciberseguridad</a>
+  <ul class="collapse">
+  <li><a href="#registro" id="toc-registro" class="nav-link" data-scroll-target="#registro">1. Registro</a></li>
+  <li><a href="#exploración-del-dataset" id="toc-exploración-del-dataset" class="nav-link" data-scroll-target="#exploración-del-dataset">2. Exploración del dataset</a></li>
+  <li><a href="#hipergrafo-conectando-todas-las-entidades" id="toc-hipergrafo-conectando-todas-las-entidades" class="nav-link" data-scroll-target="#hipergrafo-conectando-todas-las-entidades">4. Hipergrafo: conectando todas las entidades</a></li>
+  <li><a href="#visualización-avanzada-codificar-el-contexto-en-el-grafo" id="toc-visualización-avanzada-codificar-el-contexto-en-el-grafo" class="nav-link" data-scroll-target="#visualización-avanzada-codificar-el-contexto-en-el-grafo">5. Visualización avanzada: codificar el contexto en el grafo</a></li>
+  <li><a href="#actividad-práctica" id="toc-actividad-práctica" class="nav-link" data-scroll-target="#actividad-práctica">Actividad práctica</a></li>
+  <li><a href="#lecturas-adicionales" id="toc-lecturas-adicionales" class="nav-link" data-scroll-target="#lecturas-adicionales">Lecturas adicionales</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Análisis y visualización de grandes conjuntos de datos</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div id="lgV57EgMoV-x" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> google.colab <span class="im">import</span> drive</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>drive.mount(<span class="st">'/content/drive'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="introducción-a-graphistry" class="level2">
+<h2 class="anchored" data-anchor-id="introducción-a-graphistry">Introducción a Graphistry</h2>
+<p>Graphistry es una plataforma GPU-acelerada para <strong>visualizar y analizar grafos enormes</strong> de forma interactiva.</p>
+<section id="casos-de-uso-real" class="level3">
+<h3 class="anchored" data-anchor-id="casos-de-uso-real">Casos de uso real</h3>
+<ul>
+<li>Fraude financiero: detectar redes de operaciones sospechosas</li>
+<li>Redes sociales: analizar comunidades e influencers</li>
+<li>Supply Chain: rastrear dependencias complejas</li>
+<li>Epidemiología: modelar transmisión de enfermedades</li>
+<li>Ciberseguridad: detectar botnet y ataques coordinados</li>
+</ul>
+</section>
+</section>
+<section id="fundamentos-teóricos-de-grafos" class="level2">
+<h2 class="anchored" data-anchor-id="fundamentos-teóricos-de-grafos">Fundamentos teóricos de grafos</h2>
+<p>Antes de usar Graphistry, vamos a ver los fundamentos de un grafo y entender por qué estas estructuras son útiles para modelar relaciones.</p>
+<div id="oANuX0MipSko" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>Image(<span class="st">'/content/drive/MyDrive/Graph-Workshop/imgs/graph.png'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li>Un <strong>grafo</strong> representa relaciones entre entidades.</li>
+<li>Los <strong>nodos</strong> son las entidades. Por ejemplo, personas, cuentas, hospitales, dispositivos, lugares, entre otros.</li>
+<li>Las <strong>aristas</strong> conectan nodos y pueden ser dirigidas o no dirigidas.</li>
+<li>Las aristas pueden tener <strong>peso</strong>, que mide intensidad, frecuencia o distancia.</li>
+<li>Los grafos ayudan a detectar <strong>comunidades</strong>, <strong>puentes</strong>, <strong>rutas</strong> y <strong>puntos críticos</strong>.</li>
+</ul>
+<section id="tipos-más-comunes" class="level3">
+<h3 class="anchored" data-anchor-id="tipos-más-comunes">Tipos más comunes</h3>
+<ul>
+<li><strong>No dirigido</strong>: la relación va en ambos sentidos.</li>
+<li><strong>Dirigido</strong>: la dirección importa (A → B).</li>
+<li><strong>Ponderado</strong>: cada conexión tiene un valor numérico.</li>
+<li><strong>Bipartito</strong>: hay dos tipos de nodos y las conexiones solo ocurren entre tipos distintos.</li>
+<li><strong>Multigrafo</strong>: pueden existir varias conexiones entre los mismos nodos.</li>
+</ul>
+</section>
+<section id="cuándo-conviene-pensar-en-grafos" class="level3">
+<h3 class="anchored" data-anchor-id="cuándo-conviene-pensar-en-grafos">¿Cuándo conviene pensar en grafos?</h3>
+<ul>
+<li>Cuando el valor está en las <strong>relaciones</strong> y no solo en las filas (datos tabulares).</li>
+<li>Cuando necesitas encontrar <strong>influencia</strong> o <strong>intermediación</strong>.</li>
+<li>Cuando el problema tiene <strong>propagación</strong>: epidemias, rumores, fallos, fraudes.</li>
+<li>Cuando quieres ver <strong>estructura global</strong>: comunidades, hubs, cuellos de botella.</li>
+</ul>
+</section>
+</section>
+<section id="instalación-y-setup" class="level2">
+<h2 class="anchored" data-anchor-id="instalación-y-setup">Instalación y Setup</h2>
+<div id="17d0bb67" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>libraries <span class="op">=</span> [<span class="st">'networkx'</span>, <span class="st">'matplotlib'</span>, <span class="st">'pandas'</span>, <span class="st">'numpy'</span>, <span class="st">'scipy'</span>]</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> subprocess</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> lib <span class="kw">in</span> libraries:</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>:</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="bu">__import__</span>(lib)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">ImportError</span>:</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        subprocess.check_call([sys.executable, <span class="st">"-m"</span>, <span class="st">"pip"</span>, <span class="st">"install"</span>, lib, <span class="st">"-q"</span>])</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objects <span class="im">as</span> go</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotly.subplots <span class="im">import</span> make_subplots</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="0b144780" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>G_theory <span class="op">=</span> nx.Graph()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>G_theory.add_edges_from([</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'A'</span>, <span class="st">'B'</span>),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'A'</span>, <span class="st">'C'</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'B'</span>, <span class="st">'D'</span>),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'C'</span>, <span class="st">'D'</span>),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    (<span class="st">'D'</span>, <span class="st">'E'</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>pos_theory <span class="op">=</span> nx.spring_layout(G_theory, seed<span class="op">=</span><span class="dv">23</span>) <span class="co"># seed cambia la disposición de los nodos y nx.spring_layout es un algoritmo de disposición de nodos que simula un sistema de resortes para distribuir los nodos de manera equilibrada en el espacio.</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="dv">4</span>))</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>nx.draw_networkx_nodes(G_theory, pos_theory, node_color<span class="op">=</span><span class="st">'#0E6D54'</span>, node_size<span class="op">=</span><span class="dv">1400</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>nx.draw_networkx_edges(G_theory, pos_theory, width<span class="op">=</span><span class="dv">2</span>, alpha<span class="op">=</span><span class="fl">0.6</span>, edge_color<span class="op">=</span><span class="st">'gray'</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>nx.draw_networkx_labels(G_theory, pos_theory, font_size<span class="op">=</span><span class="dv">12</span>, font_weight<span class="op">=</span><span class="st">'bold'</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Grafo teórico mínimo'</span>, fontsize<span class="op">=</span><span class="dv">14</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>ax.axis(<span class="st">'off'</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Nodos:'</span>, <span class="bu">list</span>(G_theory.nodes()))</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Aristas:'</span>, <span class="bu">list</span>(G_theory.edges()))</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Grados:'</span>, <span class="bu">dict</span>(G_theory.degree()))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="representaciones-del-grafo" class="level3">
+<h3 class="anchored" data-anchor-id="representaciones-del-grafo">Representaciones del grafo</h3>
+<p>Un mismo grafo puede representarse de varias maneras: - <strong>Lista de adyacencia</strong>: útil para navegación y algoritmos. - <strong>Matriz de adyacencia</strong>: útil para álgebra lineal y visualización. - <strong>Lista de aristas</strong>: útil para carga de datos y análisis tabular.</p>
+<p>La elección depende del tamaño del problema y del tipo de análisis que quieras hacer.</p>
+<div id="4e3d8f95" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Representaciones básicas del mismo grafo</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>adj_list <span class="op">=</span> {node: <span class="bu">list</span>(G_theory.neighbors(node)) <span class="cf">for</span> node <span class="kw">in</span> G_theory.nodes()}</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Lista de adyacencia:'</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> node, neighbors <span class="kw">in</span> adj_list.items():</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'  </span><span class="sc">{</span>node<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>neighbors<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">Matriz de adyacencia:'</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>adj_matrix <span class="op">=</span> nx.to_pandas_adjacency(G_theory)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(adj_matrix)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">Lista de aristas:'</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> edge <span class="kw">in</span> G_theory.edges():</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'  </span><span class="sc">{</span>edge<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">Métricas:'</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'  Componentes conectadas:'</span>, nx.number_connected_components(G_theory))</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'  Camino más corto A → E:'</span>, nx.shortest_path(G_theory, <span class="st">'A'</span>, <span class="st">'E'</span>))</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'  Centralidad de grado:'</span>, nx.degree_centrality(G_theory))</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Centralidad de grado mide la importancia de un nodo en función de su número de conexiones.</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Un nodo con alta centralidad de grado tiene muchas conexiones directas con otros nodos, lo que puede indicar que es un punto clave en la red.</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="grafos-dirigidos-vs.-grafos-no-dirigidos" class="level3">
+<h3 class="anchored" data-anchor-id="grafos-dirigidos-vs.-grafos-no-dirigidos">Grafos dirigidos vs.&nbsp;Grafos no dirigidos</h3>
+<p>Hasta ahora usamos un grafo <strong>no dirigido</strong>, donde la relación vale en ambos sentidos. Eso sirve cuando la conexión es simétrica, como una amistad o una interacción mutua.</p>
+<p>En un grafo <strong>dirigido</strong>, la flecha importa: A → B no implica B → A. Esto es útil para flujo de información, seguimiento, enlaces web o contagio en una sola dirección.</p>
+</section>
+<section id="ejemplos-rápidos" class="level3">
+<h3 class="anchored" data-anchor-id="ejemplos-rápidos">Ejemplos rápidos</h3>
+<ul>
+<li><strong>No dirigido</strong>: amistad, coautoría, contacto mutuo.</li>
+<li><strong>Dirigido</strong>: seguidores en redes, enlaces web, transmisión de una fuente a un receptor.</li>
+<li><strong>Ponderado</strong>: intensidad de interacción, tiempo, distancia, frecuencia.</li>
+</ul>
+<div id="afa6e26b" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>G_undirected <span class="op">=</span> nx.Graph()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>G_undirected.add_edges_from([(<span class="st">'A'</span>, <span class="st">'B'</span>), (<span class="st">'B'</span>, <span class="st">'C'</span>), (<span class="st">'C'</span>, <span class="st">'D'</span>)])</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>G_directed <span class="op">=</span> nx.DiGraph()</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>G_directed.add_edges_from([(<span class="st">'A'</span>, <span class="st">'B'</span>), (<span class="st">'B'</span>, <span class="st">'C'</span>), (<span class="st">'C'</span>, <span class="st">'A'</span>)])</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'No dirigido:'</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'  Edges:'</span>, <span class="bu">list</span>(G_undirected.edges()))</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'  Degrees:'</span>, <span class="bu">dict</span>(G_undirected.degree()))</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">Dirigido:'</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'  Edges:'</span>, <span class="bu">list</span>(G_directed.edges()))</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'  In-degree:'</span>, <span class="bu">dict</span>(G_directed.in_degree()))</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'  Out-degree:'</span>, <span class="bu">dict</span>(G_directed.out_degree()))</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>pos_u <span class="op">=</span> nx.spring_layout(G_undirected, seed<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>nx.draw_networkx(G_undirected, pos_u, ax<span class="op">=</span>axes[<span class="dv">0</span>], node_color<span class="op">=</span><span class="st">'#0E6D54'</span>, edge_color<span class="op">=</span><span class="st">'gray'</span>, node_size<span class="op">=</span><span class="dv">1400</span>, with_labels<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].set_title(<span class="st">'No dirigido'</span>)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">0</span>].axis(<span class="st">'off'</span>)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>pos_d <span class="op">=</span> nx.spring_layout(G_directed, seed<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>nx.draw_networkx(G_directed, pos_d, ax<span class="op">=</span>axes[<span class="dv">1</span>], node_color<span class="op">=</span><span class="st">'#1f77b4'</span>, edge_color<span class="op">=</span><span class="st">'gray'</span>, node_size<span class="op">=</span><span class="dv">1400</span>, with_labels<span class="op">=</span><span class="va">True</span>, arrows<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].set_title(<span class="st">'Dirigido'</span>)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>axes[<span class="dv">1</span>].axis(<span class="st">'off'</span>)</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Regla práctica:</strong> si se puede preguntar “¿de quién a quién?”, usa dirigido; si solo importa están conectados, usa no dirigido.</p>
+</section>
+<section id="grafos-ponderados" class="level3">
+<h3 class="anchored" data-anchor-id="grafos-ponderados">Grafos ponderados</h3>
+<p>Un grafo ponderado asigna un valor numérico a cada arista. Ese valor puede representar distancia, costo, duración, fuerza de relación o riesgo.</p>
+<p>En epidemias, un peso puede representar <strong>probabilidad de transmisión</strong> o <strong>intensidad de contacto</strong>. En transporte, puede representar <strong>tiempo de viaje</strong>.</p>
+<div id="ae3cb2c5" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>G_weighted <span class="op">=</span> nx.Graph()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>G_weighted.add_edge(<span class="st">'A'</span>, <span class="st">'B'</span>, weight<span class="op">=</span><span class="fl">2.5</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>G_weighted.add_edge(<span class="st">'B'</span>, <span class="st">'C'</span>, weight<span class="op">=</span><span class="fl">1.0</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>G_weighted.add_edge(<span class="st">'A'</span>, <span class="st">'C'</span>, weight<span class="op">=</span><span class="fl">4.0</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>G_weighted.add_edge(<span class="st">'C'</span>, <span class="st">'D'</span>, weight<span class="op">=</span><span class="fl">3.2</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> u, v, data <span class="kw">in</span> G_weighted.edges(data<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'</span><span class="sc">{</span>u<span class="sc">}</span><span class="ss"> -- </span><span class="sc">{</span>v<span class="sc">}</span><span class="ss"> | peso = </span><span class="sc">{</span>data[<span class="st">"weight"</span>]<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>pos_w <span class="op">=</span> nx.spring_layout(G_weighted, seed<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>nx.draw_networkx(G_weighted, pos_w, ax<span class="op">=</span>axes, node_color<span class="op">=</span><span class="st">'#0E6D54'</span>, edge_color<span class="op">=</span><span class="st">'gray'</span>, node_size<span class="op">=</span><span class="dv">1400</span>, with_labels<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>axes.set_title(<span class="st">'Ponderado'</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>axes.axis(<span class="st">'off'</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>weighted_path <span class="op">=</span> nx.shortest_path(G_weighted, <span class="st">'A'</span>, <span class="st">'D'</span>, weight<span class="op">=</span><span class="st">'weight'</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">Camino mínimo ponderado A → D:'</span>, weighted_path)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Costo total:'</span>, nx.shortest_path_length(G_weighted, <span class="st">'A'</span>, <span class="st">'D'</span>, weight<span class="op">=</span><span class="st">'weight'</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="8e38ac23" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Ruta mas corta de D a B sin peso:'</span>, nx.shortest_path(G_weighted, <span class="st">'D'</span>, <span class="st">'B'</span>))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Costo total con peso:'</span>, nx.shortest_path_length(G_weighted, <span class="st">'D'</span>, <span class="st">'B'</span>, weight<span class="op">=</span><span class="st">'weight'</span>))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="centralidad" class="level3">
+<h3 class="anchored" data-anchor-id="centralidad">Centralidad</h3>
+<p>Dos preguntas clave en análisis de grafos son: - <strong>¿Quién es importante?</strong> La centralidad permite encontrar nodos influyentes.</p>
+<ul>
+<li><strong>¿Qué grupos hay?</strong> Las comunidades ayudan a ver subgrupos fuertemente conectados dentro de la red.</li>
+</ul>
+<div id="f30ba929" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grado de centralidad es una medida de la importancia de un nodo en una red, basada en el número de conexiones que tiene con otros nodos. Un nodo con alta centralidad de grado es aquel que tiene muchas conexiones directas, lo que puede indicar que es un punto clave o influyente dentro de la red.</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>degree_centrality <span class="op">=</span> nx.degree_centrality(G_theory)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># La centralidad de intermediación mide la importancia de un nodo en función de la cantidad de veces que actúa como puente a lo largo del camino más corto entre otros nodos. Un nodo con alta centralidad de intermediación es aquel que se encuentra en muchas rutas más cortas entre otros nodos, lo que puede indicar que es un punto crucial para la comunicación o el flujo de información dentro de la red.</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>betweenness_centrality <span class="op">=</span> nx.betweenness_centrality(G_theory)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#Comunidades detectadas utilizando el algoritmo de modularidad codiciosa, que agrupa los nodos en comunidades basándose en la maximización de la modularidad, una medida que evalúa la densidad de conexiones dentro de las comunidades en comparación con las conexiones entre comunidades.</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>communities <span class="op">=</span> <span class="bu">list</span>(nx.community.greedy_modularity_communities(G_theory))</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">3</span>))</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>pos_w <span class="op">=</span> nx.spring_layout(G_theory, seed<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>nx.draw_networkx(G_theory, pos_w, ax<span class="op">=</span>axes, node_color<span class="op">=</span><span class="st">'#0E6D54'</span>, edge_color<span class="op">=</span><span class="st">'gray'</span>, node_size<span class="op">=</span><span class="dv">1400</span>, with_labels<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>axes.axis(<span class="st">'off'</span>)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Centralidad de grado:'</span>)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> node, value <span class="kw">in</span> degree_centrality.items():</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'  </span><span class="sc">{</span>node<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>value<span class="sc">:.3f}</span><span class="ss">'</span>)</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">Centralidad de intermediación:'</span>)</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> node, value <span class="kw">in</span> betweenness_centrality.items():</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'  </span><span class="sc">{</span>node<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>value<span class="sc">:.3f}</span><span class="ss">'</span>)</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">Comunidades detectadas:'</span>)</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> idx, community_nodes <span class="kw">in</span> <span class="bu">enumerate</span>(communities, start<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'  Comunidad </span><span class="sc">{</span>idx<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span><span class="bu">sorted</span>(<span class="bu">list</span>(community_nodes))<span class="sc">}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ul>
+<li><strong><code>degree_centrality</code></strong><br>
+Mide qué tan conectado está cada nodo respecto al total posible de conexiones.
+<ul>
+<li>Valor alto indica un nodo con muchas conexiones directas (más “activo” localmente).</li>
+<li>En <code>G_theory</code>, <strong>D</strong> tiene el valor más alto, por eso actúa como hub local.</li>
+</ul></li>
+<li><strong><code>betweenness_centrality</code></strong><br>
+Mide cuántos caminos mínimos entre pares de nodos pasan por un nodo.
+<ul>
+<li>Valor alto indica nodo “puente” o cuello de botella para el flujo en la red.</li>
+<li>En <code>G_theory</code>, <strong>D</strong> también domina, indicando que conecta zonas del grafo.</li>
+</ul></li>
+<li><strong><code>communities</code> (comunidades)</strong><br>
+Detecta grupos de nodos más conectados entre sí que con el resto del grafo.
+<ul>
+<li>Sirve para segmentación, detección de módulos o subredes.</li>
+<li>Se detectan dos grupos: <code>{'A','B','C'}</code> y <code>{'D','E'}</code>.</li>
+</ul></li>
+</ul>
+</section>
+<section id="modelos-de-propagación-epidémica" class="level3">
+<h3 class="anchored" data-anchor-id="modelos-de-propagación-epidémica">Modelos de propagación epidémica</h3>
+<p>En un grafo, una epidemia puede verse como un proceso de expansión a través de aristas de contacto. Aquí usamos una versión muy simple para entender la idea: - un nodo puede estar <strong>susceptible</strong>, <strong>infectado</strong> o <strong>recuperado</strong>; - un nodo infectado puede contagiar a sus vecinos; - la propagación depende de la estructura del grafo y de la probabilidad de transmisión.</p>
+<p>Este modelo es una aproximación pedagógica, no una simulación epidemiológica completa.</p>
+<blockquote class="blockquote">
+<p>En este notebook se usa <code>infection_probability = 0.65</code> solo con fines didácticos para ejemplificar la dinámica de propagación, pero elegir este valor en la realialidad es una tarea más desafiante.</p>
+</blockquote>
+<div id="b3b44263" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">42</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>COLOR <span class="op">=</span> {<span class="st">'S'</span>: <span class="st">'#A8DADC'</span>, <span class="st">'I'</span>: <span class="st">'#E63946'</span>, <span class="st">'R'</span>: <span class="st">'#2DC653'</span>}</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>LABEL <span class="op">=</span> {<span class="st">'S'</span>: <span class="st">'Susceptible'</span>, <span class="st">'I'</span>: <span class="st">'Infectado'</span>, <span class="st">'R'</span>: <span class="st">'Recuperado'</span>}</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>state <span class="op">=</span> {node: <span class="st">'S'</span> <span class="cf">for</span> node <span class="kw">in</span> G_theory.nodes()}</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>patient_zero <span class="op">=</span> <span class="st">'A'</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>state[patient_zero] <span class="op">=</span> <span class="st">'I'</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>infection_probability <span class="op">=</span> <span class="fl">0.65</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>steps <span class="op">=</span> []</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>state_steps <span class="op">=</span> [state.copy()]</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    new_state <span class="op">=</span> state.copy()</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    newly_infected <span class="op">=</span> []</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> node <span class="kw">in</span> G_theory.nodes():</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> state[node] <span class="op">==</span> <span class="st">'I'</span>:</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> neighbor <span class="kw">in</span> G_theory.neighbors(node):</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> state[neighbor] <span class="op">==</span> <span class="st">'S'</span> <span class="kw">and</span> np.random.rand() <span class="op">&lt;</span> infection_probability:</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>                    new_state[neighbor] <span class="op">=</span> <span class="st">'I'</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>                    newly_infected.append(neighbor)</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>            new_state[node] <span class="op">=</span> <span class="st">'R'</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    state <span class="op">=</span> new_state</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>    steps.append((state.copy(), newly_infected))</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>    state_steps.append(state.copy())</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Estado final por nodo:'</span>)</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> node, node_state <span class="kw">in</span> state.items():</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'  </span><span class="sc">{</span>node<span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>node_state<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">Definición de los estados:'</span>)</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'  S = susceptible'</span>)</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'  I = infectado'</span>)</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'  R = recuperado'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="visualización-de-la-propagación" class="level3">
+<h3 class="anchored" data-anchor-id="visualización-de-la-propagación">Visualización de la propagación</h3>
+<p>Para que se entienda mejor, mostramos la evolución en paneles de tiempo:</p>
+<ul>
+<li>🟦 <strong>S</strong>: Susceptible</li>
+<li>🟥 <strong>I</strong>: Infectado</li>
+<li>🟩 <strong>R</strong>: Recuperado</li>
+</ul>
+<p>Se pueden ver las transisiones de contagio de un nodo a otro en el grafo.</p>
+<div id="f0f09922" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.patches <span class="im">import</span> Patch</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">'state_steps'</span> <span class="kw">in</span> <span class="bu">globals</span>() <span class="kw">and</span> <span class="bu">len</span>(state_steps) <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    snapshots_vis <span class="op">=</span> state_steps</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    initial_state <span class="op">=</span> {node: <span class="st">'S'</span> <span class="cf">for</span> node <span class="kw">in</span> G_theory.nodes()}</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    initial_state[<span class="st">'A'</span>] <span class="op">=</span> <span class="st">'I'</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    snapshots_vis <span class="op">=</span> [initial_state] <span class="op">+</span> [snap <span class="cf">for</span> snap, _ <span class="kw">in</span> steps]</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>color_vis <span class="op">=</span> {<span class="st">'S'</span>: <span class="st">'#5DADE2'</span>, <span class="st">'I'</span>: <span class="st">'#E74C3C'</span>, <span class="st">'R'</span>: <span class="st">'#58D68D'</span>}</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>label_vis <span class="op">=</span> {<span class="st">'S'</span>: <span class="st">'Susceptible'</span>, <span class="st">'I'</span>: <span class="st">'Infectado'</span>, <span class="st">'R'</span>: <span class="st">'Recuperado'</span>}</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>n_steps <span class="op">=</span> <span class="bu">len</span>(snapshots_vis)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>fig, axes <span class="op">=</span> plt.subplots(<span class="dv">1</span>, n_steps, figsize<span class="op">=</span>(<span class="fl">3.3</span> <span class="op">*</span> n_steps, <span class="fl">3.6</span>))</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> n_steps <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    axes <span class="op">=</span> [axes]</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t, ax <span class="kw">in</span> <span class="bu">enumerate</span>(axes):</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    snap <span class="op">=</span> snapshots_vis[t]</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    node_colors <span class="op">=</span> [color_vis[snap[node]] <span class="cf">for</span> node <span class="kw">in</span> G_theory.nodes()]</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    nx.draw_networkx_edges(G_theory, pos_theory, ax<span class="op">=</span>ax, edge_color<span class="op">=</span><span class="st">'gray'</span>, alpha<span class="op">=</span><span class="fl">0.45</span>, width<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    nx.draw_networkx_nodes(G_theory, pos_theory, ax<span class="op">=</span>ax, node_color<span class="op">=</span>node_colors, node_size<span class="op">=</span><span class="dv">1100</span>)</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    nx.draw_networkx_labels(G_theory, pos_theory, ax<span class="op">=</span>ax, font_color<span class="op">=</span><span class="st">'white'</span>, font_weight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>    counts <span class="op">=</span> {k: <span class="bu">sum</span>(v <span class="op">==</span> k <span class="cf">for</span> v <span class="kw">in</span> snap.values()) <span class="cf">for</span> k <span class="kw">in</span> [<span class="st">'S'</span>, <span class="st">'I'</span>, <span class="st">'R'</span>]}</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="ss">f"Paso </span><span class="sc">{</span>t<span class="sc">}</span><span class="ch">\n</span><span class="ss">S:</span><span class="sc">{</span>counts[<span class="st">'S'</span>]<span class="sc">}</span><span class="ss"> I:</span><span class="sc">{</span>counts[<span class="st">'I'</span>]<span class="sc">}</span><span class="ss"> R:</span><span class="sc">{</span>counts[<span class="st">'R'</span>]<span class="sc">}</span><span class="ss">"</span>, fontsize<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>    ax.axis(<span class="st">'off'</span>)</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>legend_items <span class="op">=</span> [Patch(facecolor<span class="op">=</span>color_vis[k], label<span class="op">=</span>label_vis[k]) <span class="cf">for</span> k <span class="kw">in</span> [<span class="st">'S'</span>, <span class="st">'I'</span>, <span class="st">'R'</span>]]</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>fig.legend(handles<span class="op">=</span>legend_items, loc<span class="op">=</span><span class="st">'lower center'</span>, ncol<span class="op">=</span><span class="dv">3</span>, frameon<span class="op">=</span><span class="va">False</span>, bbox_to_anchor<span class="op">=</span>(<span class="fl">0.5</span>, <span class="op">-</span><span class="fl">0.08</span>))</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>plt.suptitle(<span class="st">'Propagación epidémica sobre el grafo'</span>, fontsize<span class="op">=</span><span class="dv">13</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>, y<span class="op">=</span><span class="fl">1.05</span>)</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>La visualización del modelo SIR (Susceptible-Infectado-Recuperado) sobre un grafo pequeño permite ilustrar cómo la estructura de las conexiones afecta la propagación de una epidemia.</p>
+<ul>
+<li><strong>Estados:</strong>
+<ul>
+<li><strong>S (Susceptible):</strong> Nodo sano que puede infectarse.<br>
+</li>
+<li><strong>I (Infectado):</strong> Nodo que puede contagiar a sus vecinos.<br>
+</li>
+<li><strong>R (Recuperado):</strong> Nodo que ya no puede infectar ni ser infectado.</li>
+</ul></li>
+<li><strong>Simulación:</strong>
+<ol type="1">
+<li>Se parte de un nodo inicial infectado (“paciente cero”).</li>
+<li>En cada paso, los infectados pueden contagiar a sus vecinos susceptibles con cierta probabilidad (<code>infection_probability</code>).</li>
+<li>Los infectados pasan a recuperados en el siguiente paso.</li>
+<li>Se registra el estado de cada nodo en cada paso (<code>state_steps</code>).</li>
+</ol></li>
+<li><strong>Visualización:</strong>
+<ul>
+<li>Se muestran paneles con el grafo según el estado de cada nodo en cada paso.</li>
+<li>Se grafica la evolución temporal del número de nodos en cada estado (curva SIR).</li>
+</ul></li>
+</ul>
+<p>Esto permite observar cómo la epidemia se propaga, cuántos nodos se infectan y recuperan, y cómo la estructura de la red influye en la dinámica del contagio.</p>
+</section>
+</section>
+<section id="graphistry-aplicado-a-un-dataset-de-ciberseguridad" class="level1">
+<h1>Graphistry aplicado a un dataset de ciberseguridad</h1>
+<p>En esta sección, empleamos <strong>Graphistry</strong>, una plataforma de visualización de grafos acelerada por GPU. A diferencia de NetworkX o Matplotlib, Graphistry está pensada para exploración interactiva en el navegador: puedes hacer zoom, filtrar nodos en tiempo real y navegar grafos de millones de aristas sin perder fluidez.</p>
+<p>El <strong>dataset es <code>honeypot.csv</code></strong>, el cual contiene 220 alertas capturadas por un honeypot, un sistema diseñado para atraer y registrar intentos de intrusión. Cada fila es una combinación única de atacante, víctima, puerto y vulnerabilidad, con el número de intentos y el rango temporal del ataque.</p>
+<p>El flujo que seguiremos es el proceso estándar de análisis con Graphistry:</p>
+<ol type="1">
+<li><strong>Registro:</strong> autenticación contra el servidor de renderizado<br>
+</li>
+<li><strong>Exploración del dataset:</strong> entender la estructura antes de graficar<br>
+</li>
+<li><strong>Grafo simple:</strong> la representación más directa: <code>attackerIP → victimIP</code><br>
+</li>
+<li><strong>Hipergrafo:</strong> conectar todas las entidades presentes en cada alerta<br>
+</li>
+<li><strong>Visualización avanzada:</strong> codificar roles, intensidad y tiempo en el propio grafo</li>
+</ol>
+<section id="registro" class="level2">
+<h2 class="anchored" data-anchor-id="registro">1. Registro</h2>
+<p>Graphistry renderiza los grafos en un servidor externo que aprovecha la GPU para calcular el layout y gestionar la interactividad.</p>
+<p>Por ello, el siguiente paso es crear una cuenta gratuita en <a href="https://hub.graphistry.com">hub.graphistry.com</a> y luego sustituir las credenciales en la celda siguiente. Si prefieres no registrarte ahora, puedes ejecutar todas las celdas de preparación de datos; únicamente las llamadas a <code>.plot()</code> requieren conexión activa (pero esta es la parte más atractiva).</p>
+<div id="7NAhmu6gpq8_" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install graphistry</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="1076efa4" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> graphistry</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Reemplaza con tus credenciales de hub.graphistry.com</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>graphistry.register(api<span class="op">=</span><span class="dv">3</span>, username<span class="op">=</span><span class="st">'USER'</span>, password<span class="op">=</span><span class="st">'PASSWOD'</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>                     protocol<span class="op">=</span><span class="st">'https'</span>, server<span class="op">=</span><span class="st">'hub.graphistry.com'</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"graphistry version:"</span>, graphistry.__version__)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="exploración-del-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="exploración-del-dataset">2. Exploración del dataset</h2>
+<p>Antes de construir cualquier grafo conviene entender qué hay en los datos. El dataset agrupa alertas por combinación única de <code>(attackerIP, victimIP, victimPort, vulnName)</code>. Es decir, no son eventos individuales sino conteos agregados.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 59%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Columna</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>attackerIP</code></td>
+<td>IP de origen del ataque</td>
+</tr>
+<tr class="even">
+<td><code>victimIP</code></td>
+<td>IP del sistema comprometido o expuesto</td>
+</tr>
+<tr class="odd">
+<td><code>victimPort</code></td>
+<td>Puerto de destino explotado</td>
+</tr>
+<tr class="even">
+<td><code>vulnName</code></td>
+<td>Identificador de la vulnerabilidad utilizada</td>
+</tr>
+<tr class="odd">
+<td><code>count</code></td>
+<td>Número de intentos registrados para esa combinación</td>
+</tr>
+<tr class="even">
+<td><code>time(max)</code> / <code>time(min)</code></td>
+<td>Ventana temporal del ataque en formato Unix timestamp</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Desbalance del dataset</strong>, alto contraste entre atacantes y víctimas.</p>
+<div id="2d5d1f38" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">'/content/drive/MyDrive/Graph-Workshop/data/honeypot.csv'</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Filas   : </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Columnas: </span><span class="sc">{</span><span class="bu">list</span>(df.columns)<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>df.sample(<span class="dv">5</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="3bab619d" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'victimIP'</span>].unique()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="31256d02" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'attackerIP'</span>].nunique()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="7aaca160" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grafo simple, una arista por cada alerta attackerIP → victimIP</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> graphistry.edges(df, <span class="st">'attackerIP'</span>, <span class="st">'victimIP'</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Aristas cargadas: </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>df[[<span class="st">'attackerIP'</span>, <span class="st">'victimIP'</span>, <span class="st">'vulnName'</span>, <span class="st">'count'</span>]].head()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Grafo simple de ataque, attackerIP y victimIP</p>
+<p>Primero, una representación simple, donde cada fila del dataset se convierte en una arista dirigida entre la IP atacante y la IP víctima. Se muestra la topología pura de quién ataca a quién.</p>
+<div id="0c4c98c3" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># renderizar en Graphistry (requiere credenciales del paso anterior)</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>g.plot()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>En el grafo anterior NO se puede apreciar la relación entre un atacante concreto y la vulnerabilidad que prefiere, o entre un puerto y las IPs que lo atacan.</strong></p>
+</section>
+<section id="hipergrafo-conectando-todas-las-entidades" class="level2">
+<h2 class="anchored" data-anchor-id="hipergrafo-conectando-todas-las-entidades">4. Hipergrafo: conectando todas las entidades</h2>
+<p>El <strong>hipergrafo</strong> de Graphistry resuelve esto convirtiendo cada fila en una conexión entre múltiples entidades a la vez. En lugar de una sola arista por alerta, obtenemos un nodo por cada entidad única (IP, puerto, vulnerabilidad) y aristas que describen las relaciones entre ellos.</p>
+<p>Exploramos dos variantes:</p>
+<p><strong>Approach 1, fila como nodo hub:</strong> cada fila se convierte en un nodo central que conecta hacia sus entidades. Es más denso y permite ver patrones de co-ocurrencia.</p>
+<p><strong>Approach 2, conexiones directas (<code>direct=True</code>):</strong> se definen explícitamente qué pares de entidades se conectan. El resultado es más limpio y facilita preguntas del tipo <em>¿qué vulnerabilidades usa un atacante concreto?</em> o <em>¿qué puertos están asociados a una IP víctima?</em></p>
+<p>En ambos casos, <code>attackerIP</code> y <code>victimIP</code> se fusionan bajo un mismo tipo <code>ip</code> para evitar nodos duplicados cuando una misma dirección aparece en ambos roles.</p>
+<div id="20b71a64" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Approach 1: cada fila es un nodo hub conectado a sus entidades</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>hg1 <span class="op">=</span> graphistry.hypergraph(</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    df,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    entity_types<span class="op">=</span>[<span class="st">'attackerIP'</span>, <span class="st">'victimIP'</span>, <span class="st">'victimPort'</span>, <span class="st">'vulnName'</span>],</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    opts<span class="op">=</span>{</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Fusionar attackerIP y victimIP en un solo tipo de nodo 'ip'</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">'CATEGORIES'</span>: {</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>            <span class="st">'ip'</span>: [<span class="st">'attackerIP'</span>, <span class="st">'victimIP'</span>]</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>hg1_g <span class="op">=</span> hg1[<span class="st">'graph'</span>]</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Nodos : </span><span class="sc">{</span><span class="bu">len</span>(hg1_g._nodes)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Aristas: </span><span class="sc">{</span><span class="bu">len</span>(hg1_g._edges)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>hg1_g.plot()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="5144e211" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Approach 2: conexiones directas entre entidades (sin nodo fila intermedio)</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>hg2 <span class="op">=</span> graphistry.hypergraph(</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    df,</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    entity_types<span class="op">=</span>[<span class="st">'attackerIP'</span>, <span class="st">'victimIP'</span>, <span class="st">'victimPort'</span>, <span class="st">'vulnName'</span>],</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    direct<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    opts<span class="op">=</span>{</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">'EDGES'</span>: {</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>            <span class="st">'attackerIP'</span>: [<span class="st">'victimIP'</span>, <span class="st">'victimPort'</span>, <span class="st">'vulnName'</span>],</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>            <span class="st">'victimPort'</span>: [<span class="st">'victimIP'</span>],</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>            <span class="st">'vulnName'</span>:   [<span class="st">'victimIP'</span>]</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>        },</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">'CATEGORIES'</span>: {</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>            <span class="st">'ip'</span>: [<span class="st">'attackerIP'</span>, <span class="st">'victimIP'</span>]</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>hg2_g <span class="op">=</span> hg2[<span class="st">'graph'</span>]</span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Nodos : </span><span class="sc">{</span><span class="bu">len</span>(hg2_g._nodes)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Aristas: </span><span class="sc">{</span><span class="bu">len</span>(hg2_g._edges)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>hg2_g.plot()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>## Diferencia principal: - Approach 1 (fila como nodo hub): cada alerta crea un nodo intermedio (EventID) que conecta IP atacante, IP víctima, puerto y vulnerabilidad. - Más detalle por evento y mejor para co-ocurrencias, pero grafo más denso/ruidoso.</p>
+<ul>
+<li>Approach 2 (direct=True): conecta entidades directamente (sin nodo intermedio visible).
+<ul>
+<li>Grafo más limpio y fácil de leer para relaciones directas, pero con menos énfasis en el contexto completo de cada fila.</li>
+</ul></li>
+</ul>
+</section>
+<section id="visualización-avanzada-codificar-el-contexto-en-el-grafo" class="level2">
+<h2 class="anchored" data-anchor-id="visualización-avanzada-codificar-el-contexto-en-el-grafo">5. Visualización avanzada: codificar el contexto en el grafo</h2>
+<p>Hasta aquí el grafo muestra <em>estructura</em>. En este paso añadimos <em>contexto</em>: queremos que la visualización responda preguntas sin necesidad de volver a la tabla.</p>
+<p>Para eso construimos primero una tabla de nodos que asigna atributos a cada IP: su rol (atacante o víctima) y el total de intentos que ha generado o recibido. Esta tabla es la que <strong>Graphistry</strong> usará para controlar el estilo visual de cada nodo.</p>
+<p>Las decisiones de codificación son deliberadas:</p>
+<ul>
+<li><strong>Color por rol:</strong> rojo para atacantes, blanco para víctimas. El contraste hace inmediata la lectura del grafo sin necesidad de leyenda.</li>
+<li><strong>Ícono por rol:</strong> <code>bomb</code> y <code>laptop</code> refuerzan el rol sin depender solo del color, útil cuando el grafo se imprime o se comparte en escala de grises.</li>
+<li><strong>Tamaño proporcional a <code>attacks</code>:</strong> los atacantes más activos ocupan más espacio visual, haciendo obvia la asimetría de actividad de un vistazo.</li>
+<li><strong>Color de arista por <code>time(min)</code>:</strong> el degradado azul → rojo mapea el tiempo del primer contacto registrado, permitiendo ver si los ataques se concentran en una ventana o están distribuidos en el tiempo.</li>
+</ul>
+<p>Esta combinación de encodings convierte el grafo en un artefacto analítico: cada atributo visual tiene una razón, y el resultado se puede leer sin documentación adicional.</p>
+<div id="1106db8e" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabla de víctimas</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>targets_df <span class="op">=</span> (</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    df[[<span class="st">'victimIP'</span>]]</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    .drop_duplicates()</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    .rename(columns<span class="op">=</span>{<span class="st">'victimIP'</span>: <span class="st">'node_id'</span>})</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    .assign(<span class="bu">type</span><span class="op">=</span><span class="st">'victim'</span>, attacks<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Tabla de atacantes con conteo de ataques</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>attackers_df <span class="op">=</span> (</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    df.groupby(<span class="st">'attackerIP'</span>)</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    .agg(attacks<span class="op">=</span>pd.NamedAgg(column<span class="op">=</span><span class="st">'count'</span>, aggfunc<span class="op">=</span><span class="st">'sum'</span>))</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>    .rename(columns<span class="op">=</span>{<span class="st">'attackerIP'</span>: <span class="st">'node_id'</span>})</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>    .assign(<span class="bu">type</span><span class="op">=</span><span class="st">'attacker'</span>)</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>nodes_df <span class="op">=</span> pd.concat([targets_df, attackers_df], ignore_index<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Atacantes únicos : </span><span class="sc">{</span><span class="bu">len</span>(attackers_df)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Víctimas únicas  : </span><span class="sc">{</span><span class="bu">len</span>(targets_df)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>nodes_df.sort_values(<span class="st">'attacks'</span>, ascending<span class="op">=</span><span class="va">False</span>).head()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="3768e997" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>g_adv <span class="op">=</span> (</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    graphistry</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    .edges(df, <span class="st">'attackerIP'</span>, <span class="st">'victimIP'</span>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    .nodes(nodes_df, <span class="st">'node_id'</span>)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># color por rol, atacante (rojo) vs víctima (green)</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    .encode_point_color(<span class="st">'type'</span>, categorical_mapping<span class="op">=</span>{</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">'attacker'</span>: <span class="st">'red'</span>,</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">'victim'</span>:   <span class="st">'green'</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    }, default_mapping<span class="op">=</span><span class="st">'gray'</span>)</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ícono por rol (FontAwesome v4)</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>    .encode_point_icon(<span class="st">'type'</span>, categorical_mapping<span class="op">=</span>{</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">'attacker'</span>: <span class="st">'bomb'</span>,</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">'victim'</span>:   <span class="st">'laptop'</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># tamaño proporcional al número de ataques enviados</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>    .encode_point_size(<span class="st">'attacks'</span>)</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Color de arista, degradado temporal (azul → green= más reciente)</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>    .encode_edge_color(<span class="st">'time(min)'</span>, palette<span class="op">=</span>[<span class="st">'blue'</span>, <span class="st">'purple'</span>, <span class="st">'red'</span>], as_continuous<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>    .addStyle(bg<span class="op">=</span>{<span class="st">'color'</span>: <span class="st">'#eee'</span>}, page<span class="op">=</span>{<span class="st">'title'</span>: <span class="st">'Honeypot — Red de Ataques'</span>})</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>    .settings(url_params<span class="op">=</span>{<span class="st">'play'</span>: <span class="dv">1000</span>, <span class="st">'pointSize'</span>: <span class="fl">0.5</span>})</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>g_adv.plot(as_files<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<hr>
+</section>
+<section id="actividad-práctica" class="level2">
+<h2 class="anchored" data-anchor-id="actividad-práctica">Actividad práctica</h2>
+<p>Con el dataset cargado y los grafos construidos, la siguiente celda contiene código de exploración que puedes ejecutar, modificar y extender. Las preguntas están pensadas para recorrer las mismas operaciones que usarías en un análisis real: primero entender los datos en tablas, luego trasladar esas conclusiones al grafo.</p>
+<ol type="1">
+<li>¿Qué IP concentra la mayor parte de los intentos? Suma <code>count</code> por <code>attackerIP</code> y observa la distribución ¿es uniforme o hay un atacante dominante?</li>
+</ol>
+<div id="w2anNzkrqcwp" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.groupby(<span class="st">'attackerIP'</span>)[<span class="st">'count'</span>].<span class="bu">sum</span>().sort_values(ascending<span class="op">=</span><span class="va">False</span>).head())</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ol start="2" type="1">
+<li>¿Qué vulnerabilidad aparece con más frecuencia? Revisa <code>vulnName</code> y considera si la concentración en pocas CVEs dice algo sobre el perfil del atacante.</li>
+</ol>
+<div id="G88hF2fsqrCM" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df[<span class="st">'vulnName'</span>].value_counts())</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ol start="3" type="1">
+<li>¿Qué puerto es el objetivo más común? La respuesta tiene implicaciones directas sobre qué servicio está siendo apuntado</li>
+</ol>
+<div id="c-8Wf7exqfTC" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">#TODO</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ol start="4" type="1">
+<li>Vuelve a la celda de <code>g_adv</code> y cambia el campo de <code>.encode_edge_color(...)</code> de <code>time(min)</code> a <code>count</code>. ¿Cambia la lectura visual del grafo? ¿Qué información ganas y cuál pierdes?</li>
+</ol>
+<div id="PRe3TYprqxIB" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">#TODO</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<ol start="5" type="1">
+<li>Filtra el dataset a solo las filas con <code>count &gt;= 10</code> y construye un nuevo grafo. ¿Qué atacantes desaparecen? ¿Qué estructura queda?</li>
+</ol>
+<p>La celda siguiente incluye el código de partida para los puntos 1–3 y 5.</p>
+<div id="ttsDdgHzqi1H" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>df_top <span class="op">=</span> df[df[<span class="st">'count'</span>] <span class="op">&gt;=</span> <span class="dv">10</span>]</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co">#TODO</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="lecturas-adicionales" class="level2">
+<h2 class="anchored" data-anchor-id="lecturas-adicionales">Lecturas adicionales</h2>
+<ul>
+<li><a href="https://github.com/graphistry/pygraphistry">PyGraphistry en GitHub</a></li>
+<li><a href="https://github.com/graphistry/pygraphistry/tree/master/demos/demos_databases_apis">PyGraphistry — demos con bases de datos y APIs</a></li>
+<li><a href="https://github.com/graphistry/graph-app-kit">graph-app-kit — dashboards con Streamlit</a></li>
+<li><a href="https://hub.graphistry.com/docs/ui/index/">Guía de la UI de Graphistry</a></li>
+<li><a href="https://pygraphistry.readthedocs.io/en/latest/">Documentación de encodings y estilos</a></li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<script src="../../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
