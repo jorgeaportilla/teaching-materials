@@ -2,3 +2,13 @@
 **/*.quarto_ipynb
 /_site/
 **/.DS_Store
+
+# Fuentes Quarto (no van en el repo de GitHub Pages)
+*.qmd
+_quarto.yml
+styles.scss
+card-links.js
+
+# Material de cursos (PDFs locales)
+/material/
+/docs/material/
