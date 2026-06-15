@@ -11,4 +11,6 @@ card-links.js
 
 # Material de cursos (PDFs locales)
 /material/
+!/material/**/*.ipynb
 /docs/material/
+!/docs/material/**/*.ipynb
