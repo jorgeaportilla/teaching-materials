@@ -593,5 +593,12 @@
     "title": "DEIA514 VISIÓN COMPUTACIONAL",
     "section": "Libros recomendados",
     "text": "Libros recomendados\n\n\nFoundations of Computer Vision\nAuthors: Antonio Torralba, Phillip Isola, and William Freeman.\nAbrir libro"
+  },
+  {
+    "objectID": "curso-visualizacion.html#laboratorios-pdf",
+    "href": "curso-visualizacion.html#laboratorios-pdf",
+    "title": "EIN092B VISUALIZACIÓN",
+    "section": "Laboratorios (PDF)",
+    "text": "Laboratorios (PDF)\n\nDVIS2025_Laboratorio_PowerBi.pdf\nLAB_Interfaz_gráfica_para_el_procesamiento_de_imágenes.pdf\nLAB_exploración_y_análisis_de_textos.pdf\nLAB_procesamiento_y_visualización__de_imágenes.pdf\nLAB_técnicas_de_visualización_y_agrupación_de_datos.pdf\nLAB_visualizaciýn_para_clasificación_y_predicción.pdf"
   }
 ]
